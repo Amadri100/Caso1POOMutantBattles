@@ -2,10 +2,20 @@
 Caso I POO II Semestre 
 # Spec
 ## Paquetes
+src/
+|-- modelo
+|    |-- Mutantes.java
+|-- DatosJuego.java
+|-- juego
+     |-- IObservador.java
+     |-- IObservable.java
+|-- controlador
+     |-- Controlador.java
 
 ## modelo
 
 ## juego
+
 
 ## controlador
 ### DatosJuego
@@ -21,7 +31,7 @@ metodos:
 + notificar() : void
 
 ### Controlador (implementa Observable)
-- listaMutantes : ArrayList\<Mutates>
+- listaMutantes : ArrayList\<Mutantes>
 - listaObservadores : ArrayList\<IObservador>
 - DatosJuego
 metodos:
