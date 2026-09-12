@@ -12,8 +12,20 @@ src/
 |-- controlador
      |-- Controlador.java
 
-## modelo
 
+## modelo
+Mutantes
+- nombre : String
+- equipo : int
+- vida : int
+- ataque : int
+- defensa : int
+- Methods:
+- estaVivo() : boolean
+
+Poderes
+- Methods:
+- void usarPoder()
 ## juego
 
 
