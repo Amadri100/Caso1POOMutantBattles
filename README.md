@@ -14,18 +14,18 @@ src/
 
 
 ## modelo
-Mutantes
+### Mutantes
 - nombre : String
 - equipo : int
 - vida : int
 - ataque : int
 - defensa : int
-- Methods:
-- estaVivo() : boolean
+metodos: 
++ estaVivo() : boolean
 
-Poderes
-- Methods:
-- void usarPoder()
+### Poderes
+metodos:
++ usarPoder() : void
 ## juego
 
 
