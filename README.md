@@ -18,10 +18,21 @@ src/
 - nombre : String
 - equipo : int
 - vida : int
+- poder : IPower
 - ataque : int
 - defensa : int
 + estaVivo() : boolean
-### Poderes
+### IPower (Interfaz)
++ usarPoder() : void
+### PoderFuego (implementa IPower)
++ usarPoder() : void
+### PoderAgua (implementa IPower)
++ usarPoder() : void
+### PoderRayo (implementa IPower)
++ usarPoder() : void
+### PoderTierra (implementa IPower)
++ usarPoder() : void
+### PoderTelaraña (implementa IPower)
 + usarPoder() : void
 ## juego
 
@@ -65,7 +76,7 @@ src/
 + quitarObservadores(observador : IObservador) : void 
 + notificar() : void
 
-### Controlador (implementa Observable)
+### Controlador (Skillux)
 - listaMutantes : ArrayList\<Mutantes>
 - listaObservadores : ArrayList\<IObservador>
 - DatosJuego
