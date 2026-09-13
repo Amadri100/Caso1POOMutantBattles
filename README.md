@@ -5,12 +5,18 @@ Caso I POO II Semestre
 src/
 |-- modelo
 |    |-- Mutantes.java
-|-- DatosJuego.java
+|    |-- DatosJuego.java
+|    |-- IPower.java
 |-- juego
      |-- IObservador.java
      |-- IObservable.java
+     |-- ScoreBoard.java
+     |-- CampoDeBatalla.java
+     |-- Equipo.java
 |-- controlador
      |-- Controlador.java
+     |-- HiloMutante.java
+     |-- EjecutarPeleas.java
 
 
 ## modelo
