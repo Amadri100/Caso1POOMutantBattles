@@ -159,8 +159,13 @@ src/
 + actualizar(Datos)
 
 ### PantallaJuego (hereda de JPanel)
+- principal : VentanaPrincipal
 + actualizar(TempDatos) 
 
+### AnimaciónAtaque
+- poder : Poder
+- origen : Punto
+- destino : Punto
 ## otros
 
 ### Constantes
