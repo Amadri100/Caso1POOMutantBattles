@@ -1,7 +1,8 @@
 # Introduccion
 Caso I POO II Semestre 
-# Spec
-## Paquetes
+
+# Estructura del Proyecto
+```
 src/
 |-- modelo
 |    |-- Mutantes.java
@@ -11,7 +12,10 @@ src/
      |-- IObservable.java
 |-- controlador
      |-- Controlador.java
+```
 
+# Spec
+## Paquetes
 
 ## modelo
 ### Mutantes
@@ -52,7 +56,6 @@ src/
 + getSimbolo() : String
 + getListaMutantes() : ArrayList\<Mutantes>
 
-
 ### CampoDeBatalla
 - sizeX : int
 - sizeY : int
@@ -63,16 +66,14 @@ src/
 + getDimensiones() : int[]
 + getEquipoA() : Equipo
 + getEquipoB() : Equipo
-+ getTablaRadios() : double[][]
-
-// tabla de radios = tabla[indiceEquipoA][indiceEquipoB]
 
 ### ScoreBoard
 - mutantesVivos : int
 - mutantesMuertos : int 
 - mutantesEquipoA : int
 - mutantesEquipoB : int
-+ actualizar(equipoA : int, Equipo : Equipo)
++ actualizar(equipoA : Equipo, equipoB : Equipo) : void
++ toString() : String
 
 
 ## controlador
@@ -87,33 +88,38 @@ src/
 
 ### EjecutorDePeleas (implementa Runnable)
 - controlador : Contraladors
-- executorService0 : ExecutorService
+- executorService : ThreadPoolExecutor
 - colaPeleas : ConcurrentLinkedQueue\<int[]>
 - listaEjecutores : EjecutarPeleas[]
 - activo : boolean
 + run() : void
 + obtenerDatoCola() : int[]
 + agregarDatoCola(int[]) : void 
-+ reiniciarMutantes() : void
++ reiniciarMutantes() : void 
 
-
+//reiniciarMutantes() -> Hace que los mutantes vuelvan a estar listos para moverse
 // Todos los potenciales oponentes de un mutante son los que estan a radioMaximo + distanciaMaximaDeRecorrido
 
 ### HiloMutante (implementa Runnable)
+- Controlador
 - estaVivo : boolean
 - listoParaAtacar : boolean
-- mutante : synchronized Mutante
+- mutante :  Mutante
 + run() : void
 + isEstaVivo() : boolean
 + isListoParaAtacar() : boolean
 + setListoParaAtacar(valor : boolean) : void
 + actualizar() : void 
-+ getMutante() : mutante
++ recibirResultadoPelea(dañoRecibido: int, poderObtenido : int) : void 
+
+// recibirResultadoPelea() es un metodo Synchronized 
 ### DatosJuego
-- listaMutantes : ArrayList\<Mutante>
+- listaMutantes : ArrayList\<HiloMutante>
 - simboloPorEquipo : String[]
 - colorPorEquipo : Color[]
-+ gettersYSteers // desarrollar
++ getListaMutantes() : ArrayList\<Mutante>
++ getSimboloPorEquipo : String[]
++ ColorPorEquipo : Color[]
 
 ### IObservable (Intefaz)
 + agregaObservadores(observador : IObservador) : void
@@ -121,9 +127,15 @@ src/
 + notificar() : void
 
 ### Controlador (Implementa IObservable)
-- listaMutantes : ArrayList\<Mutantes>
+- listaHilosMutantes : ArrayList\<Mutantes>
 - listaObservadores : ArrayList\<IObservador>
-- DatosJuego
+- ejecutorDePeleas : EjecutorDePeleas 
+- executorService : ThreadPoolExecutor
+- campoDeBatalla : CampoDeBatalla
+- DatosJuego : DatosJuego
++ medidasCamposBatalla : int[]
++ iniciarJuego() : void
++ obtenerDatosJuego() : void
 + agregaObservadores(observador : IObservador) : void
 + quitarObservadores(observador : IObservador) : void 
 + notificar() : void
@@ -156,6 +168,8 @@ src/
 + getY() : int
 ### Matematicas
 + calcularRadio(Punto a, Punto b) : double
+
+
 # UML
 
 
