@@ -15,13 +15,17 @@ src/
 
 ## modelo
 ### Mutantes
+- id : int
 - nombre : String
 - equipo : int
 - vida : int
 - poder : IPower
+- posicion : Punto
 - ataque : int
 - defensa : int
 + estaVivo() : boolean
+
+// id empieza en 0
 ### IPower (Interfaz)
 + usarPoder() : void
 ### PoderFuego (implementa IPower)
@@ -34,6 +38,7 @@ src/
 + usarPoder() : void
 ### PoderTelaraña (implementa IPower)
 + usarPoder() : void
+
 ## juego
 
 ### Equipo
@@ -46,7 +51,8 @@ src/
 + getColor() : Color
 + getSimbolo() : String
 + getListaMutantes() : ArrayList\<Mutantes>
- 
+
+
 ### CampoDeBatalla
 - sizeX : int
 - sizeY : int
@@ -55,6 +61,11 @@ src/
 + crearEquipos(size : int) : void
 + terminoElJuego() : boolean
 + getDimensiones() : int[]
++ getEquipoA() : Equipo
++ getEquipoB() : Equipo
++ getTablaRadios() : double[][]
+
+// tabla de radios = tabla[indiceEquipoA][indiceEquipoB]
 
 ### ScoreBoard
 - mutantesVivos : int
@@ -76,7 +87,7 @@ src/
 + quitarObservadores(observador : IObservador) : void 
 + notificar() : void
 
-### Controlador (Skillux)
+### Controlador (Implementa IObservable)
 - listaMutantes : ArrayList\<Mutantes>
 - listaObservadores : ArrayList\<IObservador>
 - DatosJuego
@@ -102,8 +113,16 @@ src/
 ## otros
 
 ### Constantes
-
-
++ TIEMPO_ESPERA : static int
+### Punto
+- x : int
+- y : int
++ setX(x : int)
++ setY(y : int)
++ getX() : int
++ getY() : int
+### Matematicas
++ calcularRadio(Punto a, Punto b) : double
 # UML
 
 
