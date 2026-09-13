@@ -76,6 +76,39 @@ src/
 
 
 ## controlador
+
+### EjecutarPeleas (implementa Runnable)
+- refenciaDeCola : ConcurrentLinkedQueue\<int[]>
+- ejecutor : EjecutorDePeleas
+- activo : boolean
++ run() : void
++ obtenerMutante(id : int, equipo : String) : HiloMutante
++ terminar()
+
+### EjecutorDePeleas (implementa Runnable)
+- controlador : Contraladors
+- executorService0 : ExecutorService
+- colaPeleas : ConcurrentLinkedQueue\<int[]>
+- listaEjecutores : EjecutarPeleas[]
+- activo : boolean
++ run() : void
++ obtenerDatoCola() : int[]
++ agregarDatoCola(int[]) : void 
++ reiniciarMutantes() : void
+
+
+// Todos los potenciales oponentes de un mutante son los que estan a radioMaximo + distanciaMaximaDeRecorrido
+
+### HiloMutante (implementa Runnable)
+- estaVivo : boolean
+- listoParaAtacar : boolean
+- mutante : synchronized Mutante
++ run() : void
++ isEstaVivo() : boolean
++ isListoParaAtacar() : boolean
++ setListoParaAtacar(valor : boolean) : void
++ actualizar() : void 
++ getMutante() : mutante
 ### DatosJuego
 - listaMutantes : ArrayList\<Mutante>
 - simboloPorEquipo : String[]
