@@ -20,13 +20,37 @@ src/
 - vida : int
 - ataque : int
 - defensa : int
-metodos: 
 + estaVivo() : boolean
-
 ### Poderes
-metodos:
 + usarPoder() : void
 ## juego
+
+### Equipo
+- listaMutantes : ArrayList\<Mutantes>
+- simbolo : String
+- color : Color
++ generarMutantes(cantidad : int) : void
++ setColor(color : Color) : void
++ setSimbolo(simbolo : String) : void
++ getColor() : Color
++ getSimbolo() : String
++ getListaMutantes() : ArrayList\<Mutantes>
+ 
+### CampoDeBatalla
+- sizeX : int
+- sizeY : int
+- equipoA : Equipo
+- equipoB : Equipo
++ crearEquipos(size : int) : void
++ terminoElJuego() : boolean
++ getDimensiones() : int[]
+
+### ScoreBoard
+- mutantesVivos : int
+- mutantesMuertos : int 
+- mutantesEquipoA : int
+- mutantesEquipoB : int
++ actualizar(equipoA : int, Equipo : Equipo)
 
 
 ## controlador
@@ -34,7 +58,6 @@ metodos:
 - listaMutantes : ArrayList\<Mutante>
 - simboloPorEquipo : String[]
 - colorPorEquipo : Color[]
-metodos:
 + gettersYSteers // desarrollar
 
 ### IObservable (Intefaz)
@@ -46,7 +69,6 @@ metodos:
 - listaMutantes : ArrayList\<Mutantes>
 - listaObservadores : ArrayList\<IObservador>
 - DatosJuego
-metodos:
 + agregaObservadores(observador : IObservador) : void
 + quitarObservadores(observador : IObservador) : void 
 + notificar() : void
@@ -58,14 +80,14 @@ metodos:
 ### ObservadorUi (herada de ObserverAbs)
 - ventanaPrincipal : VentanaPrincipal
 - datos : DatosJuego
-metodos 
 + actualizar(datos : DatosJuego)
+
 ### VentanaPrincipal (hereda de JFrame)
-metodos
 + actualizar(Datos)
+
 ### PantallaJuego (hereda de JPanel)
-metodos:
 + actualizar(TempDatos) 
+
 ## otros
 
 ### Constantes
