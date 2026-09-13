@@ -144,9 +144,14 @@ src/
 + actualizar(datos : DatosJuego)
 
 ### VentanaPrincipal (hereda de JFrame)
+- botonIniciar : JButton     // Biblioteca javax.swing.JButton
+- botonPausar : JButton      // Biblioteca javax.swing.JButton
+- botonReiniciar : JButton   // Biblioteca javax.swing.JButton
 + actualizar(Datos)
++ inicializarComponentes() : void
 
 ### PantallaJuego (hereda de JPanel)
+- datosJuego : DatosJuego
 + actualizar(TempDatos) 
 
 ## otros
