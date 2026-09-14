@@ -5,7 +5,7 @@ Caso I POO II Semestre
 ```
 src/
 |-- modelo
-|    |-- Mutantes.java
+|    |-- Mutante.java
 |    |-- DatosJuego.java
 |    |-- IPower.java
 |-- juego
@@ -24,60 +24,83 @@ src/
 ## Paquetes
 
 ## modelo
-### Mutantes
+### Mutante
 - id : int
 - nombre : String
-- equipo : int
+- equipo : Equipo
 - vida : int
 - poder : IPower
 - posicion : Punto
 - ataque : int
 - defensa : int
++ Mutante(id : int, nombre : String, equipo : Equipo) 
++ getId() : int
++ getNombre() : String
++ getEquipo() : Equipo
++ getPoder() : IPower
++ getPosicion() : Punto
++ atacar() : int
++ recibirDaño(daño : int) : int
 + estaVivo() : boolean
 
 // id empieza en 0
 ### IPower (Interfaz)
 + usarPoder() : void
 ### PoderFuego (implementa IPower)
++ PoderFuego() 
 + usarPoder() : void
 ### PoderAgua (implementa IPower)
++ PoderAgua() 
 + usarPoder() : void
 ### PoderRayo (implementa IPower)
++ PoderRayo()
 + usarPoder() : void
 ### PoderTierra (implementa IPower)
++ PoderTierra()
 + usarPoder() : void
 ### PoderTelaraña (implementa IPower)
++ PoderTelaraña()
 + usarPoder() : void
 
 ## juego
 
+### TipoEquipo (enum)
++ EQUIPO_A
++ EQUIPO_B
+
 ### Equipo
-- listaMutantes : ArrayList\<Mutantes>
+- listaMutantes : ArrayList\<Mutante>
+- cualEquipo : TipoEquipo
 - simbolo : String
 - color : Color
-+ generarMutantes(cantidad : int) : void
++ Equipo (equipo : TipoEquipo, cantidad : int)
 + setColor(color : Color) : void
 + setSimbolo(simbolo : String) : void
 + getColor() : Color
 + getSimbolo() : String
-+ getListaMutantes() : ArrayList\<Mutantes>
++ getListaMutantes() : ArrayList\<Mutante>
 
 ### CampoDeBatalla
 - sizeX : int
 - sizeY : int
 - equipoA : Equipo
 - equipoB : Equipo
+- scoreBoard : ScoreBoard
++ CampoDeBatalla(sizeX : int, sizeY : int)
 + crearEquipos(size : int) : void
 + terminoElJuego() : boolean
-+ getDimensiones() : int[]
++ getPuntoMedio() : Punto
++ getPuntoMaximo() : Punto
 + getEquipoA() : Equipo
 + getEquipoB() : Equipo
++ getScoreBoard() : ScoreBoard
 
 ### ScoreBoard
 - mutantesVivos : int
 - mutantesMuertos : int 
 - mutantesEquipoA : int
 - mutantesEquipoB : int
++ ScoreBoard(equipoA : Equipo, equipoB : Equipo)
 + actualizar(equipoA : Equipo, equipoB : Equipo) : void
 + toString() : String
 
@@ -133,7 +156,7 @@ src/
 + notificar() : void
 
 ### Controlador (Implementa IObservable)
-- listaHilosMutantes : ArrayList\<Mutantes>
+- listaHilosMutantes : ArrayList\<Mutante>
 - listaObservadores : ArrayList\<IObservador>
 - ejecutorDePeleas : EjecutorDePeleas 
 - executorService : ThreadPoolExecutor
