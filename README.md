@@ -176,7 +176,7 @@ src/
 + actualizar(datos : DatosJuego)
 
 ## ui
-### ObservadorUi (herada de ObserverAbs)
+### ObservadorUi (implementa IObservador)
 - ventanaPrincipal : VentanaPrincipal
 - datos : DatosJuego
 + actualizar(datos : DatosJuego)
@@ -185,7 +185,7 @@ src/
 - botonIniciar : JButton     
 - botonPausar : JButton      
 - botonReiniciar : JButton   
-+ actualizar(Datos)
++ actualizar(datos : DatosJuego)
 + inicializarComponentes() : void
 
 ### PantallaJuego (hereda de JPanel)
@@ -193,18 +193,18 @@ src/
 - principal : VentanaPrincipal
 - ataquesActivos : ArrayList\<AnimaciónAtaque>
 - infoVisible : boolean
-+ actualizar(TempDatos) 
++ actualizar(datos : DatosJuego) 
 
 ### MutantesDibujados
 - mutante : Mutante
-- jLabel : JLable
+- jLabel : JLabel
 - imagen : ImageIcon
 + dibujar() : void
 + obtenerPosicion() : Punto
 + toString() : String
 ### AnimaciónAtaque
 - pantalla : PantallaJuego
-- jLabel : JLable
+- jLabel : JLabel
 - poder : Poder
 - origen : Punto
 - destino : Punto
