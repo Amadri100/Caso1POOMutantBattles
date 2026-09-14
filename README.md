@@ -133,7 +133,9 @@ src/
 - Controlador
 - estaVivo : boolean
 - listoParaAtacar : boolean
-- mutante :  Mutante
+- mutante : Mutante
+- activo : boolean
++ HiloMutante(mutante : Mutante)
 + run() : void
 + isEstaVivo() : boolean
 + isListoParaAtacar() : boolean
@@ -146,6 +148,7 @@ src/
 - listaMutantes : ArrayList\<HiloMutante>
 - simboloPorEquipo : String[]
 - colorPorEquipo : Color[]
++ DatosJuego(campoDeBatalla : CampoDeBatalla)  
 + getListaMutantes() : ArrayList\<Mutante>
 + getSimboloPorEquipo : String[]
 + ColorPorEquipo : Color[]
@@ -179,9 +182,9 @@ src/
 + actualizar(datos : DatosJuego)
 
 ### VentanaPrincipal (hereda de JFrame)
-- botonIniciar : JButton     // Biblioteca javax.swing.JButton
-- botonPausar : JButton      // Biblioteca javax.swing.JButton
-- botonReiniciar : JButton   // Biblioteca javax.swing.JButton
+- botonIniciar : JButton     
+- botonPausar : JButton      
+- botonReiniciar : JButton   
 + actualizar(Datos)
 + inicializarComponentes() : void
 
@@ -210,7 +213,16 @@ src/
 ## otros
 
 ### Constantes
-+ TIEMPO_ESPERA : static int
++ TIEMPO_ESPERA : static final int
++ SIZE_X : static final int
++ SIZE_Y : static final int
++ ATAQUE_MAXIMO : static final int
++ TASA_REFRESCO : static final int
++ VELOCIDAD : static final int
++ TAMAÑO_MAXIMO : static final int
++ MAXIMO_DEFENSA : static final int
++ MAXIMO_ATAQUE : static final int
++ MAXIMO_POR_DEFECTO_ ATAQUE : static final int
 ### Punto
 - x : int
 - y : int
