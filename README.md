@@ -163,14 +163,27 @@ src/
 + inicializarComponentes() : void
 
 ### PantallaJuego (hereda de JPanel)
-- datosJuego : DatosJuego
+- mutantesDibujados : ArrayList\<MutantesDibujados>
 - principal : VentanaPrincipal
+- ataquesActivos : ArrayList\<AnimaciónAtaque>
+- infoVisible : boolean
 + actualizar(TempDatos) 
 
+### MutantesDibujados
+- mutante : Mutante
+- jLabel : JLable
+- imagen : ImageIcon
++ dibujar() : void
++ obtenerPosicion() : Punto
++ toString() : String
 ### AnimaciónAtaque
+- pantalla : PantallaJuego
+- jLabel : JLable
 - poder : Poder
 - origen : Punto
 - destino : Punto
+- dibujos : ArrayList\<ImageIcon>
++ dibujar() : void
 ## otros
 
 ### Constantes
