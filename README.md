@@ -118,6 +118,7 @@ src/
 - refenciaDeCola : ConcurrentLinkedQueue\<int[]>
 - ejecutor : EjecutorDePeleas
 - activo : boolean
++ EjecutarPeleas(ejecutor : EjecutorDePeleas)
 + run() : void
 + obtenerMutante(id : int, equipo : String) : HiloMutante
 + terminar()
@@ -136,6 +137,16 @@ src/
 
 //reiniciarMutantes() -> Hace que los mutantes vuelvan a estar listos para moverse
 // Todos los potenciales oponentes de un mutante son los que estan a radioMaximo + distanciaMaximaDeRecorrido
+
+### Ataque
+- poder : Poder
+- origen : Punto
+- destino : Punto
++ Ataque(poder : Poder, origen : Punto, destino : Punto)
++ Ataque(ataque : Ataque)
++ getPoder() : Poder 
++ getOrigen() : Punto
++ getDestino() : Punto 
 
 ### HiloMutante (implementa Runnable)
 - Controlador
@@ -173,6 +184,7 @@ src/
 - executorService : ThreadPoolExecutor
 - campoDeBatalla : CampoDeBatalla
 - DatosJuego : DatosJuego
++ Controlador() 
 + medidasCamposBatalla : int[]
 + iniciarJuego() : void
 + obtenerDatosJuego() : void
@@ -187,12 +199,14 @@ src/
 ### ObservadorUi (implementa IObservador)
 - ventanaPrincipal : VentanaPrincipal
 - datos : DatosJuego
++ ObservadorUi(ventana : VentanaPrincipal)
 + actualizar(datos : DatosJuego)
 
 ### VentanaPrincipal (hereda de JFrame)
 - botonIniciar : JButton     
 - botonPausar : JButton      
 - botonReiniciar : JButton   
++ VentanaPrincipal() 
 + actualizar(datos : DatosJuego)
 + inicializarComponentes() : void
 
@@ -201,6 +215,7 @@ src/
 - principal : VentanaPrincipal
 - ataquesActivos : ArrayList\<AnimaciónAtaque>
 - infoVisible : boolean
++ PantallaJuego(principal : VentanaPrincipal)
 + actualizar(datos : DatosJuego) 
 
 ### MutantesDibujados
@@ -211,17 +226,15 @@ src/
 + dibujar() : void
 + obtenerPosicion() : Punto
 + toString() : String
-### AnimaciónAtaque
+### AnimaciónAtaque (hereda de Ataque)
 - pantalla : PantallaJuego
 - jLabel : JLabel
-- poder : Poder
-- origen : Punto
-- destino : Punto
 - dibujos : ArrayList\<ImageIcon>
++ AnimaciónAtaque(Ataque)
 + dibujar() : void
 ## otros
 
-### Constantes
+### Constantes (clase final)
 + TIEMPO_ESPERA : static final int
 + SIZE_X : static final int
 + SIZE_Y : static final int
@@ -235,6 +248,7 @@ src/
 ### Punto
 - x : int
 - y : int
++ Punto(x : int, y : int)
 + setX(x : int)
 + setY(y : int)
 + getX() : int
