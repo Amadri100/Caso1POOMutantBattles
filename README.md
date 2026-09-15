@@ -79,6 +79,7 @@ src/
 + getColor() : Color
 + getSimbolo() : String
 + getListaMutantes() : ArrayList\<Mutante>
++ getTipoEquipo() : TipoEquipo
 
 ### CampoDeBatalla
 - sizeX : int
@@ -94,6 +95,8 @@ src/
 + getEquipoA() : Equipo
 + getEquipoB() : Equipo
 + getScoreBoard() : ScoreBoard
++ getSizeX() : int
++ getSizeY() : int
 
 ### ScoreBoard
 - mutantesVivos : int
@@ -103,6 +106,10 @@ src/
 + ScoreBoard(equipoA : Equipo, equipoB : Equipo)
 + actualizar(equipoA : Equipo, equipoB : Equipo) : void
 + toString() : String
++ getMutantesVivos() : int
++ getMutantesMuertos() : int
++ getMutantesEquipoA() : int
++ getMutantesEquipoB() : int
 
 
 ## controlador
