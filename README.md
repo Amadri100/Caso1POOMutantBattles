@@ -128,6 +128,7 @@ src/
 - colaPeleas : ConcurrentLinkedQueue\<int[]>
 - listaEjecutores : EjecutarPeleas[]
 - activo : boolean
++ EjecutorDePeleas(controlador : Controlador)
 + run() : void
 + obtenerDatoCola() : int[]
 + agregarDatoCola(int[]) : void 
@@ -206,6 +207,7 @@ src/
 - mutante : Mutante
 - jLabel : JLabel
 - imagen : ImageIcon
++ MutantesDibujados(mutante : Mutante)
 + dibujar() : void
 + obtenerPosicion() : Punto
 + toString() : String
