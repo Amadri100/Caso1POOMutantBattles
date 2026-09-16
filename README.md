@@ -1,5 +1,6 @@
 # Introduccion
 Caso I POO II Semestre 
+Andrés Madrigal y David Zuniga
 
 # Estructura del Proyecto
 ```
