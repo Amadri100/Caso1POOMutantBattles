@@ -136,51 +136,84 @@ src/
 + isActivo() : boolean
 + setActivo(activo : boolean) : void
 + terminar() : void
++ 
+//EjecutarPeleas, ejecuta una pelea, revisa si ya se movio el contrincante, si ambos estan listo se ejecuta el proceso y se elimina la "llave" de la cola, de lo contrario se inserta al final para ser revisado despues.
+
+
+### DatosPelea
+- mutanteA : Mutante
+- decisionA : EstadoMutante
+- mutanteB : Mutante
+- decisionB : EstadoMutante
+- posA : Punto
+- posB : Punto
++ DatosPelea(hiloMutanteA : HiloMutante, hiloMutanteB : HiloMutante)
++ getMutanteA() : Mutante 
++ getDecisionA() : EstadoMutante
++ getMutanteB() : Mutante 
++ getDecisionB() : EstadoMutante
++ getPosA() : Punto 
++ getPosB() : Punto 
 
 ### EjecutorDePeleas (implementa Runnable)
-- controlador : Contraladors
+- controlador : Controlador
 - executorService : ThreadPoolExecutor
 - colaPeleas : ConcurrentLinkedQueue\<int[]>
+- listaPeleasCompletadas : CopyOnWriteArrayList\<int[]>
 - listaEjecutores : EjecutarPeleas[]
 - activo : boolean
 + EjecutorDePeleas(controlador : Controlador)
 + run() : void
 + obtenerDatoCola() : int[]
 + agregarDatoCola(int[]) : void 
++ agregarPeleaALista(datoPelea : DatosPelea) : void 
 + reiniciarMutantes() : void 
 + getColaPeleas() : ConcurrentLinkedQueue\<int[]>
 + getListaEjecutores() : EjecutarPeleas[]
 + isActivo() : boolean
 + setActivo(activo : boolean) : void
 
+//Utiliza una cola y una "pool" de threads para procesar todas las peleas entre los mutantes
+
 //reiniciarMutantes() -> Hace que los mutantes vuelvan a estar listos para moverse
+
 // Todos los potenciales oponentes de un mutante son los que estan a radioMaximo + distanciaMaximaDeRecorrido
 
-### Ataque
+
+### DatosAtaque
 - poder : Poder
 - origen : Punto
 - destino : Punto
-+ Ataque(poder : Poder, origen : Punto, destino : Punto)
++ Ataque(datoPelea : DatosPelea, cual : int)
 + Ataque(ataque : Ataque)
 + getPoder() : Poder 
 + getOrigen() : Punto
 + getDestino() : Punto 
 
+### EstadoMutante (enum)
++ MOVIENDOSE
++ ATAQUE
++ DEFENSA
+
+
 ### HiloMutante (implementa Runnable)
-- Controlador
+- controlador : Controlador
 - estaVivo : boolean
-- listoParaAtacar : boolean
+- estado : EstadoMutante
 - mutante : Mutante
 - activo : boolean
 + HiloMutante(mutante : Mutante)
 + run() : void
 + isEstaVivo() : boolean
-+ isListoParaAtacar() : boolean
-+ setListoParaAtacar(valor : boolean) : void
++ isEstado() : EstadoMutante
++ elegirAtaque() : void
++ regresarAEstadoBase() : void
 + actualizar() : void 
 + recibirResultadoPelea(dañoRecibido: int, poderObtenido : int) : void 
-
+//Maneja el movimiento y decision del mutante
 // recibirResultadoPelea() es un metodo Synchronized 
+// decide 
+
 ### DatosJuego
 - listaMutantes : ArrayList\<HiloMutante>
 - simboloPorEquipo : String[]
@@ -194,11 +227,20 @@ src/
 + agregaObservadores(observador : IObservador) : void
 + quitarObservadores(observador : IObservador) : void 
 + notificar() : void
+//Permite notificar a a los observadores de cualquier cambio facilmente
+
+### Notificador (Implementa Runnable)
+- controlador : Controlador 
++ Notificador(controlador : Controlador)
++ run() : void
+
+//Se encarga de cumplir la tasa de refresco del observer
 
 ### Controlador (Implementa IObservable)
 - listaHilosMutantes : ArrayList\<Mutante>
 - listaObservadores : ArrayList\<IObservador>
 - ejecutorDePeleas : EjecutorDePeleas 
+- notificador : Notificador
 - executorService : ThreadPoolExecutor
 - campoDeBatalla : CampoDeBatalla
 - DatosJuego : DatosJuego
@@ -215,8 +257,11 @@ src/
 + getListaObservadores() : ArrayList<IObservador>
 + getMedidasCampoBatalla() : int[]
 
+//Controla todo el flujo del juego y sirve de interfaz entre la UI y el sistema.
+
 ### IObservador (Intefaz)
 + actualizar(datos : DatosJuego) : void
+//Permite ser notificado de cualquier cambio en los objetos a los que se esta suscrito
 
 ### PruebaControlador
 + main(args : String[]) : static void : static void
@@ -229,6 +274,8 @@ src/
 + actualizar(datos : DatosJuego)
 + getVentanaPrincipal() : VentanaPrincipal
 + getDatos() : DatosJuego
+
+// Manda los datos actualizados al resto de la interfaz
 
 ### VentanaPrincipal (hereda de JFrame)
 - botonIniciar : JButton     
@@ -256,7 +303,7 @@ src/
 + isInfoVisible() : boolean
 + setInfoVisible(infoVisible : boolean) : void
 + agregarAnimacionAtaque(ataque : Ataque) : void
-+ paintComponent(g : Graphics) : void   // override de JPanel
++ paintComponent(g : Graphics) : void   
 
 ### MutantesDibujados
 - mutante : Mutante
@@ -279,7 +326,7 @@ src/
 + isTerminada() : boolean
 + getPantalla() : PantallaJuego
 + getJLabel() : JLabel
-+ getDibujos() : ArrayList<ImageIcon>
++ getDibujos() : ArrayList\<ImageIcon>
 + getFrameActual() : int
 + setFrameActual(frameActual : int) : void
 ## otros
@@ -291,7 +338,7 @@ src/
 + ATAQUE_MAXIMO               : static final int
 + TASA_REFRESCO               : static final int
 + VELOCIDAD                   : static final int
-+ TAMAÑO_MAXIMO                : static final int
++ TAMAÑO_MAXIMO               : static final int
 + MAXIMO_DEFENSA              : static final int
 + MAXIMO_ATAQUE               : static final int
 + MAXIMO_POR_DEFECTO_ATAQUE   : static final int
@@ -302,6 +349,7 @@ src/
 + RUTA_IMAGENES_ATAQUES       : static final String
 + NUMERO_FRAMES_ATAQUE        : static final int
 + DELAY_ANIMACION_ATAQUE      : static final int  
++ TASA_REFRESCO_OBSERVABLE    : static final int
 ### Punto
 - x : int
 - y : int
