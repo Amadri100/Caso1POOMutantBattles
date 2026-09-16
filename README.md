@@ -38,6 +38,7 @@ src/
 + getNombre() : String
 + getEquipo() : Equipo
 + getPoder() : IPower
++ moverse(posicion : Punto) : void
 + getPosicion() : Punto
 + atacar() : int
 + recibirDaño(daño : int) : int
@@ -46,21 +47,30 @@ src/
 // id empieza en 0
 ### IPower (Interfaz)
 + usarPoder() : void
++ nombrePoder() : String
 ### PoderFuego (implementa IPower)
 + PoderFuego() 
 + usarPoder() : void
++ nombrePoder() : String
 ### PoderAgua (implementa IPower)
 + PoderAgua() 
 + usarPoder() : void
++ nombrePoder() : String
 ### PoderRayo (implementa IPower)
 + PoderRayo()
 + usarPoder() : void
++ nombrePoder() : String
 ### PoderTierra (implementa IPower)
 + PoderTierra()
 + usarPoder() : void
++ nombrePoder() : String
 ### PoderTelaraña (implementa IPower)
 + PoderTelaraña()
 + usarPoder() : void
++ nombrePoder() : String
+
+### PruebaModelo
++ main(args : String[]) : static void
 
 ## juego
 
@@ -111,6 +121,8 @@ src/
 + getMutantesEquipoA() : int
 + getMutantesEquipoB() : int
 
+### PruebaJuego
++ main(args : String[]) : static void : static void
 
 ## controlador
 
@@ -121,7 +133,9 @@ src/
 + EjecutarPeleas(ejecutor : EjecutorDePeleas)
 + run() : void
 + obtenerMutante(id : int, equipo : String) : HiloMutante
-+ terminar()
++ isActivo() : boolean
++ setActivo(activo : boolean) : void
++ terminar() : void
 
 ### EjecutorDePeleas (implementa Runnable)
 - controlador : Contraladors
@@ -134,6 +148,10 @@ src/
 + obtenerDatoCola() : int[]
 + agregarDatoCola(int[]) : void 
 + reiniciarMutantes() : void 
++ getColaPeleas() : ConcurrentLinkedQueue\<int[]>
++ getListaEjecutores() : EjecutarPeleas[]
++ isActivo() : boolean
++ setActivo(activo : boolean) : void
 
 //reiniciarMutantes() -> Hace que los mutantes vuelvan a estar listos para moverse
 // Todos los potenciales oponentes de un mutante son los que estan a radioMaximo + distanciaMaximaDeRecorrido
@@ -170,7 +188,7 @@ src/
 + DatosJuego(campoDeBatalla : CampoDeBatalla)  
 + getListaMutantes() : ArrayList\<Mutante>
 + getSimboloPorEquipo : String[]
-+ ColorPorEquipo : Color[]
++ getColorPorEquipo : Color[]
 
 ### IObservable (Intefaz)
 + agregaObservadores(observador : IObservador) : void
@@ -185,15 +203,23 @@ src/
 - campoDeBatalla : CampoDeBatalla
 - DatosJuego : DatosJuego
 + Controlador() 
-+ medidasCamposBatalla : int[]
 + iniciarJuego() : void
 + obtenerDatosJuego() : void
 + agregaObservadores(observador : IObservador) : void
 + quitarObservadores(observador : IObservador) : void 
 + notificar() : void
++ getCampoDeBatalla() : CampoDeBatalla
++ getDatosJuego() : DatosJuego
++ getEjecutorDePeleas() : EjecutorDePeleas
++ getListaHilosMutantes() : ArrayList<HiloMutante>
++ getListaObservadores() : ArrayList<IObservador>
++ getMedidasCampoBatalla() : int[]
 
 ### IObservador (Intefaz)
-+ actualizar(datos : DatosJuego)
++ actualizar(datos : DatosJuego) : void
+
+### PruebaControlador
++ main(args : String[]) : static void : static void
 
 ## ui
 ### ObservadorUi (implementa IObservador)
@@ -201,14 +227,21 @@ src/
 - datos : DatosJuego
 + ObservadorUi(ventana : VentanaPrincipal)
 + actualizar(datos : DatosJuego)
++ getVentanaPrincipal() : VentanaPrincipal
++ getDatos() : DatosJuego
 
 ### VentanaPrincipal (hereda de JFrame)
 - botonIniciar : JButton     
 - botonPausar : JButton      
 - botonReiniciar : JButton   
-+ VentanaPrincipal() 
+- pantallaJuego : PantallaJuego
++ VentanaPrincipal() : void
 + actualizar(datos : DatosJuego)
 + inicializarComponentes() : void
++ getBotonIniciar() : JButton
++ getBotonPausar() : JButton
++ getBotonReiniciar() : JButton
++ getPantallaJuego() : PantallaJuego
 
 ### PantallaJuego (hereda de JPanel)
 - mutantesDibujados : ArrayList\<MutantesDibujados>
@@ -217,6 +250,13 @@ src/
 - infoVisible : boolean
 + PantallaJuego(principal : VentanaPrincipal)
 + actualizar(datos : DatosJuego) 
++ getMutantesDibujados() : ArrayList\<MutantesDibujados>
++ getPrincipal() : VentanaPrincipal
++ getAtaquesActivos() : ArrayList\<AnimaciónAtaque>
++ isInfoVisible() : boolean
++ setInfoVisible(infoVisible : boolean) : void
++ agregarAnimacionAtaque(ataque : Ataque) : void
++ paintComponent(g : Graphics) : void   // override de JPanel
 
 ### MutantesDibujados
 - mutante : Mutante
@@ -226,25 +266,42 @@ src/
 + dibujar() : void
 + obtenerPosicion() : Punto
 + toString() : String
++ getMutante() : Mutante
++ getJLabel() : JLabel
++ getImagen() : ImageIcon
+
 ### AnimaciónAtaque (hereda de Ataque)
 - pantalla : PantallaJuego
 - jLabel : JLabel
 - dibujos : ArrayList\<ImageIcon>
-+ AnimaciónAtaque(Ataque)
++ AnimaciónAtaque(ataque : Ataque)
 + dibujar() : void
++ isTerminada() : boolean
++ getPantalla() : PantallaJuego
++ getJLabel() : JLabel
++ getDibujos() : ArrayList<ImageIcon>
++ getFrameActual() : int
++ setFrameActual(frameActual : int) : void
 ## otros
 
 ### Constantes (clase final)
-+ TIEMPO_ESPERA : static final int
-+ SIZE_X : static final int
-+ SIZE_Y : static final int
-+ ATAQUE_MAXIMO : static final int
-+ TASA_REFRESCO : static final int
-+ VELOCIDAD : static final int
-+ TAMAÑO_MAXIMO : static final int
-+ MAXIMO_DEFENSA : static final int
-+ MAXIMO_ATAQUE : static final int
-+ MAXIMO_POR_DEFECTO_ ATAQUE : static final int
++ TIEMPO_ESPERA               : static final int
++ SIZE_X                      : static final int
++ SIZE_Y                      : static final int
++ ATAQUE_MAXIMO               : static final int
++ TASA_REFRESCO               : static final int
++ VELOCIDAD                   : static final int
++ TAMAÑO_MAXIMO                : static final int
++ MAXIMO_DEFENSA              : static final int
++ MAXIMO_ATAQUE               : static final int
++ MAXIMO_POR_DEFECTO_ATAQUE   : static final int
++ MAXIMO_VIDA                 : static final int
++ RADIO_MAXIMO                : static final double
++ DISTANCIA_MAXIMA_RECORRIDO  : static final int
++ RUTA_IMAGENES_MUTANTES      : static final String[]
++ RUTA_IMAGENES_ATAQUES       : static final String
++ NUMERO_FRAMES_ATAQUE        : static final int
++ DELAY_ANIMACION_ATAQUE      : static final int  
 ### Punto
 - x : int
 - y : int
@@ -256,6 +313,12 @@ src/
 ### Matematicas
 + calcularRadio(Punto a, Punto b) : double
 
+### PruebaUI
++ main(args : String[]) : static void : static void
+
+## main
+### main
++ main(args : String[]) : static void : static void
 
 # UML
 
