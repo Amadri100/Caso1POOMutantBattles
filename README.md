@@ -4,20 +4,34 @@ Caso I POO II Semestre
 # Estructura del Proyecto
 ```
 src/
-|-- modelo
-|    |-- Mutante.java
-|    |-- DatosJuego.java
-|    |-- IPower.java
-|-- juego
-     |-- IObservador.java
-     |-- IObservable.java
-     |-- ScoreBoard.java
-     |-- CampoDeBatalla.java
-     |-- Equipo.java
-|-- controlador
-     |-- Controlador.java
-     |-- HiloMutante.java
-     |-- EjecutarPeleas.java
+|-- modelo/
+    |-- Mutante.java
+    |-- IPower.java
+    |-- PoderFuego.java
+    |-- PoderAgua.java
+    |-- PoderRayo.java
+    |-- PoderTierra.java
+    |-- PoderTelaraña.java
+    |-- PruebaModelo.java
+|-- juego/
+    |-- TipoEquipo.java
+    |-- Equipo.java
+    |-- CampoDeBatalla.java
+    |-- ScoreBoard.java
+    |-- PruebaJuego.java
+|-- controlador/
+    |-- EjecutarPeleas.java
+    |-- DatosPelea.java
+    |-- EjecutorDePeleas.java
+    |-- DatosAtaque.java
+    |-- EstadoMutante.java
+    |-- HiloMutante.java
+    |-- DatosJuego.java
+    |-- IObservable.java
+    |-- Notificador.java
+    |-- Controlador.java
+    |-- IObservador.java
+    |-- PruebaControlador.java
 ```
 
 # Spec
