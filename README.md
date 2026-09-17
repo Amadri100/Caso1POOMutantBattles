@@ -174,7 +174,7 @@ src/
 - controlador : Controlador
 - executorService : ThreadPoolExecutor
 - colaPeleas : ConcurrentLinkedQueue\<int[]>
-- listaPeleasCompletadas : CopyOnWriteArrayList\<int[]>
+- listaPeleasCompletadas : CopyOnWriteArrayList\<DatosPelea>
 - listaEjecutores : EjecutarPeleas[]
 - activo : boolean
 + EjecutorDePeleas(controlador : Controlador)
@@ -231,6 +231,7 @@ src/
 
 ### DatosJuego
 - listaMutantes : ArrayList\<HiloMutante>
+- lsitaPeleas : ArrayList\<DatosPelea>
 - simboloPorEquipo : String[]
 - colorPorEquipo : Color[]
 + DatosJuego(campoDeBatalla : CampoDeBatalla)  
@@ -332,7 +333,7 @@ src/
 + getJLabel() : JLabel
 + getImagen() : ImageIcon
 
-### AnimaciónAtaque (hereda de Ataque)
+### AnimacionAtaque (hereda de DatosAtaque)
 - pantalla : PantallaJuego
 - jLabel : JLabel
 - dibujos : ArrayList\<ImageIcon>
@@ -344,6 +345,10 @@ src/
 + getDibujos() : ArrayList\<ImageIcon>
 + getFrameActual() : int
 + setFrameActual(frameActual : int) : void
+
+### PruebaUi
++ main(args : String[]) : static void : static void
+
 ## otros
 
 ### Constantes (clase final)
@@ -373,11 +378,8 @@ src/
 + setY(y : int)
 + getX() : int
 + getY() : int
-### Matematicas
-+ calcularRadio(Punto a, Punto b) : double
-
-### PruebaUI
-+ main(args : String[]) : static void : static void
+### Matematicas (clase final)
++ calcularRadio(Punto a, Punto b) : static double
 
 ## main
 ### main
