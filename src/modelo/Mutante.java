@@ -1,6 +1,7 @@
 package modelo;
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MaximizeAction;
 
+import java.util.Random;
+import otros.Constantes;
 import juego.Equipo;
 import otros.Punto;
 
@@ -18,6 +19,11 @@ public class Mutante {
         this.nombre = pNombre + id;
         this.equipo = pEquipo;
         this.vida = otros.Constantes.MAXIMO_VIDA;
+        Random rand = new Random();
+        this.ataque = rand.nextInt(Constantes.ATAQUE_MAXIMO_POR_DEFECTO - Constantes.ATAQUE_MINIMO) + Constantes.ATAQUE_MINIMO;
+        this.defensa = rand.nextInt(Constantes.DEFENSA_MAXIMO - Constantes.DEFENSA_MINIMO) + Constantes.DEFENSA_MINIMO;
+        this.posicion = new Punto(0, 0);
+        //if pEquipo = B -> Punto(SIZEX,SIZEY)
     }
  
 }

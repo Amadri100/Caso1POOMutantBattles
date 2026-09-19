@@ -359,14 +359,14 @@ src/
 + TASA_REFRESCO               : static final int
 + VELOCIDAD                   : static final int
 + TAMAÑO_MAXIMO               : static final int
-+ MAXIMO_DEFENSA              : static final int
-+ MAXIMO_ATAQUE               : static final int
++ MAXIMO_DEFENSA              : static final int 
++ MAXIMO_ATAQUE               : static final int *
 + MAXIMO_POR_DEFECTO_ATAQUE   : static final int
 + MAXIMO_VIDA                 : static final int
 + RADIO_MAXIMO                : static final double
 + DISTANCIA_MAXIMA_RECORRIDO  : static final int
 + RUTA_IMAGENES_MUTANTES      : static final String[]
-+ RUTA_IMAGENES_ATAQUES       : static final String
++ RUTA_IMAGENES_ATAQUES       : static final String[]
 + NUMERO_FRAMES_ATAQUE        : static final int
 + DELAY_ANIMACION_ATAQUE      : static final int  
 + TASA_REFRESCO_OBSERVABLE    : static final int
