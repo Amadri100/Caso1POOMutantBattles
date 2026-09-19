@@ -84,6 +84,9 @@ src/
 + usarPoder() : void
 + nombrePoder() : String
 
+### PoderAleatorio (clase final)
++ poderAleatorio() : static IPower
+
 ### PruebaModelo
 + main(args : String[]) : static void
 
@@ -99,8 +102,8 @@ src/
 - cualEquipo : TipoEquipo
 - simbolo : String
 - color : Color
-- cantidadMutantesVivos : int[]
-- cantidadMutantesMuertos : int[] 
+- cantidadMutantesVivos : int
+- cantidadMutantesMuertos : int 
 + Equipo (equipo : TipoEquipo, cantidad : int)
 + setColor(color : Color) : void
 + setSimbolo(simbolo : String) : void
@@ -126,6 +129,8 @@ src/
 + getPuntoMaximo() : Punto
 + getEquipoA() : Equipo
 + getEquipoB() : Equipo
++ getCantidadMutantesVivos() : int[]
++ getCantidadMutantesMuertos() : int[]
 + getScoreBoard() : ScoreBoard
 + getSizeX() : int
 + getSizeY() : int
@@ -135,8 +140,8 @@ src/
 - mutantesMuertos : int 
 - mutantesEquipoA : int
 - mutantesEquipoB : int
-+ ScoreBoard(equipoA : Equipo, equipoB : Equipo)
-+ actualizar(equipoA : Equipo, equipoB : Equipo) : void
++ ScoreBoard(campo : CampoBatalla)
++ actualizar(campo : CampoBatalla) : void
 + toString() : String
 + getMutantesVivos() : int
 + getMutantesMuertos() : int
@@ -378,6 +383,7 @@ src/
 + NUMERO_FRAMES_ATAQUE        : static final int
 + DELAY_ANIMACION_ATAQUE      : static final int  
 + TASA_REFRESCO_OBSERVABLE    : static final int
+
 ### Punto
 - x : int
 - y : int
@@ -386,12 +392,15 @@ src/
 + setY(y : int)
 + getX() : int
 + getY() : int
+
 ### Matematicas (clase final)
 + calcularRadio(Punto a, Punto b) : static double
++ doubleAleatorio(minimo : double , maximo : double) : static double
++ intAleatorio(minimo : int, maximo : int) : static int  
 
 ## main
 ### main
-+ main(args : String[]) : static void : static void
++ main(args : String[]) : static void 
 
 # UML
 ```

@@ -53,11 +53,11 @@ public class Equipo {
         return this.cualEquipo;
     }
 
-    public int getCantidadMutantesVivos(TipoEquipo dato) {
+    public int getCantidadMutantesVivos() {
         return this.cantidadMutantesVivos;
     }
 
-    public int getCantidadMutantesMuertos(TipoEquipo dato) {
+    public int getCantidadMutantesMuertos() {
         return this.cantidadMutantesMuertos;
     }
 

@@ -15,13 +15,14 @@ public class CampoDeBatalla {
         this.sizeY = Constantes.SIZE_Y;
         this.equipoA = new Equipo(TipoEquipo.EQUIPO_A, size);
         this.equipoB = new Equipo(TipoEquipo.EQUIPO_B, size);
-        this.scoreBoard = new ScoreBoard(this.equipoA, this.equipoB);
+        this.scoreBoard = new ScoreBoard(this);
     }
 
     public boolean terminoElJuego() {
-        boolean equipoASinVivos = this.equipoA.getCantidadMutantesVivos(TipoEquipo.EQUIPO_A) == 0;
-        boolean equipoBSinVivos = this.equipoB.getCantidadMutantesVivos(TipoEquipo.EQUIPO_B) == 0;
-        return equipoASinVivos || equipoBSinVivos; //or logico
+        int[] valores = this.getCantidadMutantesVivos();
+        boolean casoA = valores[0] == 0;
+        boolean casoB = valores[0] == 0;
+        return casoA || casoB; 
     }
 
     public Punto getPuntoMedio() {
@@ -38,6 +39,16 @@ public class CampoDeBatalla {
 
     public Equipo getEquipoB() {
         return this.equipoB;
+    }
+
+    public int[] getCantidadMutantesVivos() {
+        int[] valor = {equipoA.getCantidadMutantesVivos(), equipoB.getCantidadMutantesVivos()};
+        return valor;
+    }
+
+    public int[] getCantidadMutantesMuertos() {
+        int[] valor = {equipoA.getCantidadMutantesMuertos(), equipoB.getCantidadMutantesMuertos()};
+        return valor;
     }
 
     public ScoreBoard getScoreBoard() {

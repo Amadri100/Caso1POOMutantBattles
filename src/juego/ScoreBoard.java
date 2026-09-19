@@ -6,15 +6,17 @@ public class ScoreBoard {
     private int mutantesEquipoA;
     private int mutantesEquipoB;
 
-    public ScoreBoard(Equipo equipoA, Equipo equipoB) {
-        actualizar(equipoA, equipoB);
+    public ScoreBoard(CampoDeBatalla campo) {
+        actualizar(campo);
     }
 
-    public void actualizar(Equipo equipoA, Equipo equipoB) {
-        int vivosA = equipoA.getCantidadMutantesVivos(TipoEquipo.EQUIPO_A);
-        int vivosB = equipoB.getCantidadMutantesVivos(TipoEquipo.EQUIPO_B);
-        int muertosA = equipoA.getCantidadMutantesMuertos(TipoEquipo.EQUIPO_A);
-        int muertosB = equipoB.getCantidadMutantesMuertos(TipoEquipo.EQUIPO_B);
+    public void actualizar(CampoDeBatalla campo) {
+        int[] vivos = campo.getCantidadMutantesVivos();
+        int[] muertos = campo.getCantidadMutantesMuertos();
+        int vivosA = vivos[0];
+        int vivosB = vivos[1];
+        int muertosA = muertos[0];
+        int muertosB = muertos[1];
 
         this.mutantesEquipoA = vivosA;
         this.mutantesEquipoB = vivosB;
