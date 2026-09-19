@@ -92,12 +92,15 @@ src/
 ### TipoEquipo (enum)
 + EQUIPO_A
 + EQUIPO_B
++ obtenerIndice() : int
 
 ### Equipo
 - listaMutantes : ArrayList\<Mutante>
 - cualEquipo : TipoEquipo
 - simbolo : String
 - color : Color
+- cantidadMutantesVivos : int[]
+- cantidadMutantesMuertos : int[] 
 + Equipo (equipo : TipoEquipo, cantidad : int)
 + setColor(color : Color) : void
 + setSimbolo(simbolo : String) : void
@@ -105,6 +108,11 @@ src/
 + getSimbolo() : String
 + getListaMutantes() : ArrayList\<Mutante>
 + getTipoEquipo() : TipoEquipo
++ getCantidadMutantesVivos(dato : TipoEquipo) : int
++ getCantidadMutantesMuertos(dato : TipoEquipo) : int
++ registrarMuerte(dato : TipoEquipo) : void
+
+//cantidadMutantesVivos [0] -> Equipo A [1] -> Equipo B
 
 ### CampoDeBatalla
 - sizeX : int
@@ -112,8 +120,7 @@ src/
 - equipoA : Equipo
 - equipoB : Equipo
 - scoreBoard : ScoreBoard
-+ CampoDeBatalla(sizeX : int, sizeY : int)
-+ crearEquipos(size : int) : void
++ CampoDeBatalla(size : int)
 + terminoElJuego() : boolean
 + getPuntoMedio() : Punto
 + getPuntoMaximo() : Punto
@@ -197,10 +204,10 @@ src/
 
 ### DatosAtaque
 - poder : Poder
-- origen : Punto
-- destino : Punto
-+ Ataque(datoPelea : DatosPelea, cual : int)
-+ Ataque(ataque : Ataque)
+- mutanteOrigen : Mutante
+- mutanteDestino : Mutante
++ DatosAtaque(datoPelea : DatosPelea, cual : int)
++ DatosAtaque(ataque : DatosAtaque)
 + getPoder() : Poder 
 + getOrigen() : Punto
 + getDestino() : Punto 
@@ -209,6 +216,7 @@ src/
 + MOVIENDOSE
 + ATAQUE
 + DEFENSA
+
 
 
 ### HiloMutante (implementa Runnable)
@@ -231,7 +239,7 @@ src/
 
 ### DatosJuego
 - listaMutantes : ArrayList\<HiloMutante>
-- lsitaPeleas : ArrayList\<DatosPelea>
+- listaPeleas : ArrayList\<DatosPelea>
 - simboloPorEquipo : String[]
 - colorPorEquipo : Color[]
 + DatosJuego(campoDeBatalla : CampoDeBatalla)  

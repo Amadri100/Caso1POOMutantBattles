@@ -1,5 +1,5 @@
 package otros;
-
+import java.awt.Color;
 public final class Constantes {
     //Temp : Significa que no es fijo o es simplemente de prueba
     //Defecto: es el valor recomendado
@@ -23,6 +23,8 @@ public final class Constantes {
     public static final int MAXIMO_VIDA  = 100; //Defecto = 100
 
 
+    public static final String[] SIMBOLOS = {"A", "B"};
+
     public static final double RADIO_MAXIMO = 5; //TEMP
 
     public static final int DISTANCIA_MAXIMA_RECORRIDO = 5; //TEMP
@@ -31,6 +33,10 @@ public final class Constantes {
 
     public static final String[] RUTA_IMAGENES_ATAQUES = {"TEMP", "TEMP"}; //TEMP
 
+    public static Color[][] COLORES = {{Color.blue, Color.red}, {Color.MAGENTA, Color.GREEN}, {Color.white, Color.black}};
+
     public static final int TASA_REFRESCO = 20; //TEMP
+
+    public static final int MUTANTES_MUERTOS_INICIAL = 0; //Defecto = 0
 
 }
