@@ -187,7 +187,7 @@ src/
 - executorService : ThreadPoolExecutor
 - colaPeleas : ConcurrentLinkedQueue\<int[]>
 - listaPeleasCompletadas : CopyOnWriteArrayList\<DatosPelea>
-- listaEjecutores : EjecutarPeleas[]
+- listaEjecutores : ArrayList\<EjecutarPeleas>
 - activo : boolean
 + EjecutorDePeleas(controlador : Controlador)
 + run() : void
