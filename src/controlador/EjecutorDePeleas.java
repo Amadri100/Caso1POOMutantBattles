@@ -11,7 +11,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class EjecutorDePeleas implements Runnable {
     private Controlador controlador;
     private ThreadPoolExecutor executorService;
-    private ConcurrentLinkedQueue<int[]> colaPeleas;
+    private ConcurrentLinkedQueue<DatosPelea> colaPeleas;
     private CopyOnWriteArrayList<DatosPelea> listaPeleasCompletadas;
     private ArrayList<EjecutarPeleas> listaEjecutores;
     private boolean activo;
@@ -20,6 +20,19 @@ public class EjecutorDePeleas implements Runnable {
     public void run() {
  
     }
+
+    public DatosPelea obtenerDatoCola() {
+        return this.colaPeleas.poll();
+    }
+
+    public void agregarPeleaLista(DatosPelea datoPelea) {
+        listaPeleasCompletadas.add(datoPelea);
+    }
+
+    public void reiniciarMutantes() {
+
+    }
+
     public void setActivo(boolean activo) {
         this.activo = activo;
     }

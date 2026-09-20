@@ -222,8 +222,6 @@ src/
 + ATAQUE
 + DEFENSA
 
-
-
 ### HiloMutante (implementa Runnable)
 - controlador : Controlador
 - estaVivo : boolean
@@ -266,7 +264,7 @@ src/
 //Se encarga de cumplir la tasa de refresco del observer
 
 ### Controlador (Implementa IObservable)
-- listaHilosMutantes : ArrayList\<Mutante>
+- listaHilosMutantes : ArrayList\<Mutante>[]
 - listaObservadores : ArrayList\<IObservador>
 - ejecutorDePeleas : EjecutorDePeleas 
 - notificador : Notificador
@@ -282,7 +280,7 @@ src/
 + getCampoDeBatalla() : CampoDeBatalla
 + getDatosJuego() : DatosJuego
 + getEjecutorDePeleas() : EjecutorDePeleas
-+ getListaHilosMutantes() : ArrayList<HiloMutante>
++ getListaHilosMutantes(TipoEquipo tipo) : ArrayList<HiloMutante>
 + getListaObservadores() : ArrayList<IObservador>
 + getMedidasCampoBatalla() : int[]
 
