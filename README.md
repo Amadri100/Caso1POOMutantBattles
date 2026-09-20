@@ -154,16 +154,16 @@ src/
 ## controlador
 
 ### EjecutarPeleas (implementa Runnable)
-- refenciaDeCola : ConcurrentLinkedQueue\<int[]>
+- referenciaCola : ConcurrentLinkedQueue\<int[]>
 - ejecutor : EjecutorDePeleas
 - activo : boolean
 + EjecutarPeleas(ejecutor : EjecutorDePeleas)
 + run() : void
-+ obtenerMutante(id : int, equipo : String) : HiloMutante
++ obtenerMutante(id : int, equipo : TipoEquipo) : HiloMutante
 + isActivo() : boolean
 + setActivo(activo : boolean) : void
 + terminar() : void
-+ 
+
 //EjecutarPeleas, ejecuta una pelea, revisa si ya se movio el contrincante, si ambos estan listo se ejecuta el proceso y se elimina la "llave" de la cola, de lo contrario se inserta al final para ser revisado despues.
 
 
