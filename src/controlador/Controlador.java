@@ -1,5 +1,6 @@
 package controlador;
 
+import controlador.HiloMutante;
 import java.io.Console;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -33,7 +34,13 @@ public class Controlador implements IObservable {
 
     public void iniciarJuego(int cantidad) {
         this.campoDeBatalla = new CampoDeBatalla(cantidad);
-        //Crear Hilos mutantes
+        for (int i = 0; i < cantidad; i++) {
+            Mutante mutanteA = this.campoDeBatalla.getEquipoA().getListaMutantes().get(i);
+            Mutante mutanteB = this.campoDeBatalla.getEquipoB().getListaMutantes().get(i);
+            this.listaHilosMutantes[TipoEquipo.EQUIPO_A.getIndice()].add(mutanteA);
+            this.listaHilosMutantes[TipoEquipo.EQUIPO_B.getIndice()].add(mutanteB);
+        }
+        
     }
 
     public void obtenerDatosJuego() {
