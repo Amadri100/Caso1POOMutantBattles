@@ -45,7 +45,6 @@ public class Controlador implements IObservable {
     }
 
     public void obtenerDatosJuego() {
-        // Pendiente agregar más detalles...
         this.datosJuego = new DatosJuego(this);
     }
 
@@ -61,6 +60,7 @@ public class Controlador implements IObservable {
 
     @Override
     public void notificar() {
+        this.obtenerDatosJuego();
         for (IObservador observador : this.listaObservadores) {
             observador.actualizar(this.datosJuego);
         }
