@@ -15,7 +15,7 @@ public final class Constantes {
 
 
 
-    public static final int VELOCIDAD = 20; //TEMP
+    public static final int VELOCIDAD = 3; //TEMP
     public static final int TAMAÑO_MINIMO = 3; //Defecto = 3
     public static final int TAMAÑO_MAXIMO = 11; //Defecto = 11
 
