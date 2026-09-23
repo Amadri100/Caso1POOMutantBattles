@@ -9,6 +9,7 @@ import modelo.Mutante;
 import juego.CampoDeBatalla;
 import juego.TipoEquipo;
 import  otros.Constantes;
+import controlador.HiloMutante;
 
 public class Controlador implements IObservable {
     private ArrayList<HiloMutante>[] listaHilosMutantes;
@@ -37,8 +38,8 @@ public class Controlador implements IObservable {
         for (int i = 0; i < cantidad; i++) {
             Mutante mutanteA = this.campoDeBatalla.getEquipoA().getListaMutantes().get(i);
             Mutante mutanteB = this.campoDeBatalla.getEquipoB().getListaMutantes().get(i);
-            this.listaHilosMutantes[TipoEquipo.EQUIPO_A.getIndice()].add(mutanteA);
-            this.listaHilosMutantes[TipoEquipo.EQUIPO_B.getIndice()].add(mutanteB);
+            this.listaHilosMutantes[TipoEquipo.EQUIPO_A.getIndice()].add(new HiloMutante(mutanteA));
+            this.listaHilosMutantes[TipoEquipo.EQUIPO_B.getIndice()].add(new HiloMutante(mutanteB));
         }
         
     }
