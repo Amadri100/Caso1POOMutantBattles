@@ -21,7 +21,7 @@ public class CampoDeBatalla {
     public boolean terminoElJuego() {
         int[] valores = this.getCantidadMutantesVivos();
         boolean casoA = valores[0] == 0;
-        boolean casoB = valores[0] == 0;
+        boolean casoB = valores[1] == 0;
         return casoA || casoB; 
     }
 
