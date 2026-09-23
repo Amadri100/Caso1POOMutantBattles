@@ -10,7 +10,7 @@ import juego.TipoEquipo;
 import  otros.Constantes;
 
 public class Controlador implements IObservable {
-    private ArrayList<Mutante>[] listaHilosMutantes;
+    private ArrayList<HiloMutante>[] listaHilosMutantes;
     private ArrayList<IObservador> listaObservadores;
     private EjecutorDePeleas ejecutorDePeleas;
     private Notificador notificador;
@@ -22,7 +22,7 @@ public class Controlador implements IObservable {
     public Controlador() {
         this.listaHilosMutantes = new ArrayList[TipoEquipo.values().length]; //Unchecked warning
         for (int i = 0; i < TipoEquipo.values().length; i++) {
-            this.listaHilosMutantes[i] = new ArrayList<Mutante>();
+            this.listaHilosMutantes[i] = new ArrayList<HiloMutante>();
         }
         this.listaObservadores = new ArrayList<IObservador>();
         this.ejecutorDePeleas = new EjecutorDePeleas(this);
@@ -69,7 +69,7 @@ public class Controlador implements IObservable {
         return this.ejecutorDePeleas;
     }
 
-    public ArrayList<Mutante> getListaHilosMutantes(TipoEquipo tipo) {
+    public ArrayList<HiloMutante> getListaHilosMutantes(TipoEquipo tipo) {
         return this.listaHilosMutantes[tipo.getIndice()];
     }
 

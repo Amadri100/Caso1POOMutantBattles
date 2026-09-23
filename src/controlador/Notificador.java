@@ -1,5 +1,8 @@
 package controlador;
 
+import java.lang.invoke.ConstantCallSite;
+
+import otros.Constantes;
 
 public class Notificador implements Runnable{
     private Controlador controlador;
@@ -9,8 +12,15 @@ public class Notificador implements Runnable{
     }
     @Override
     public void run() {
-        //Accede a controlador cada cierto tiempo para mandar la notificación a la UI
-        //while(activo) {actualizar; sleep(Constante.tasaRefresco);}
+        while(activo) {
+            controlador.notificar();
+            try {
+                Thread.sleep(Constantes.DELAY_DE_THREADS);
+            } catch (InterruptedException e) {
+                System.out.println("Thread-Notificador interumpido");
+                Thread.currentThread().interrupt(); //Limpia la flag de interupción.
+            }
+        }
     }
     public void setActivo(boolean valor) {
         this.activo = valor;
