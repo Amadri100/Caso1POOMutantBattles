@@ -39,7 +39,7 @@ public final class Constantes {
 
     public static final int TASA_REFRESCO = 20; //TEMP
 
-    public static final int DELAY_DE_THREADS = 100; //TEMP
+    public static final int DELAY_DE_THREADS = 1000; //TEMP
 
     public static final int MUTANTES_MUERTOS_INICIAL = 0; //Defecto = 0
 

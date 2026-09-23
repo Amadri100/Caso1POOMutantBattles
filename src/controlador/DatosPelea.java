@@ -19,7 +19,6 @@ public class DatosPelea {
         
        
     }
-
     public Mutante getMutanteA() {
         return this.mutanteA;
     }
