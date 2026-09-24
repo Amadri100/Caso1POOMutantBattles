@@ -10,7 +10,7 @@ public class DatosJuego {
     private ArrayList<DatosPelea> listaPeleas;
     private String[] simboloPorEquipo;
     // Pendiente agregar color
-    public DatosJuego(CampoDeBatalla campoDeBatalla) {
+    public DatosJuego(Controlador controlador) {
         
         this.listaMutantes = new ArrayList<>();
         this.listaPeleas = new ArrayList<>();
@@ -21,7 +21,7 @@ public class DatosJuego {
         this.simboloPorEquipo[TipoEquipo.EQUIPO_A.getIndice()] = "A";
 
         this.simboloPorEquipo[TipoEquipo.EQUIPO_B.getIndice()] = "B";
-
+        /* 
         if (campoDeBatalla != null) {
             for (Mutante m : campoDeBatalla.getEquipoA().getListaMutantes()) {
                 this.listaMutantes.add(new HiloMutante(m));
@@ -29,7 +29,7 @@ public class DatosJuego {
             for (Mutante m : campoDeBatalla.getEquipoB().getListaMutantes()) {
                 this.listaMutantes.add(new HiloMutante(m));
             }
-        }
+        }*/
     }
 
     public ArrayList<Mutante> getListaMutantes() {
