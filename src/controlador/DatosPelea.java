@@ -14,7 +14,7 @@ public class DatosPelea {
 
     public DatosPelea(HiloMutante hiloMutanteA, HiloMutante hiloMutanteB) {
         this.mutanteA = hiloMutanteA;
-        this.mutanteB = hiloMutanteA;
+        this.mutanteB = hiloMutanteB;
     }
 
     public void guardarDatos() {
