@@ -3,15 +3,21 @@ import modelo.Mutante;
 
 public class HiloMutante implements Runnable {
     private Mutante mutante;
+    private EstadoMutante estado;
     private boolean activo;
 
     public HiloMutante(Mutante mutante) {
         this.mutante = mutante;
         this.activo = true;
+        this.estado = EstadoMutante.MOVIENDOSE;
     }
 
     public Mutante getMutante() {
         return this.mutante;
+    }
+
+    public EstadoMutante getEstado() {
+        return this.estado;
     }
 
     public boolean isActivo() {

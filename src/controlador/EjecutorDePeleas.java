@@ -8,6 +8,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import juego.TipoEquipo;
 import otros.Constantes;
+import otros.Matematicas;
  
 public class EjecutorDePeleas implements Runnable {
     private Controlador controlador;
@@ -15,6 +16,7 @@ public class EjecutorDePeleas implements Runnable {
     private ConcurrentLinkedQueue<DatosPelea> colaPeleas;
     private CopyOnWriteArrayList<DatosPelea> listaPeleasCompletadas;
     private ArrayList<EjecutarPeleas> listaEjecutores;
+    private boolean procesados = false;
     private boolean activo = true;
 
     public EjecutorDePeleas(Controlador controlador) {
@@ -31,19 +33,46 @@ public class EjecutorDePeleas implements Runnable {
 
     @Override
     public void run() {
-        for (int i = 0 ; i < this.controlador.getListaHilosMutantes(TipoEquipo.EQUIPO_A).size(); i++) {
-            HiloMutante hiloA = this.controlador.getListaHilosMutantes(TipoEquipo.EQUIPO_A).get(i); 
-            for (int j = 0 ; j < this.controlador.getListaHilosMutantes(TipoEquipo.EQUIPO_B).size(); j++) {
-                HiloMutante hiloB = this.controlador.getListaHilosMutantes(TipoEquipo.EQUIPO_B).get(j);
+        while(activo) {
+            if (!procesados) {
+                for (int i = 0 ; i < this.controlador.getListaHilosMutantes(TipoEquipo.EQUIPO_A).size(); i++) {
+                HiloMutante hiloA = this.controlador.getListaHilosMutantes(TipoEquipo.EQUIPO_A).get(i); 
+                for (int j = 0 ; j < this.controlador.getListaHilosMutantes(TipoEquipo.EQUIPO_B).size(); j++) {
+                    HiloMutante hiloB = this.controlador.getListaHilosMutantes(TipoEquipo.EQUIPO_B).get(j);
+                    double radio = Matematicas.calcularRadio(hiloA.getMutante().getPosicion(), hiloB.getMutante().getPosicion());
+                    if (radio <= Constantes.RADIO_MAXIMO + Constantes.VELOCIDAD) {
+                        DatosPelea pelea = new DatosPelea(hiloA, hiloB);
+                        this.colaPeleas.add(pelea);
+                    }
+                }
+                this.procesados = !procesados;
+                }
+                
+            }
+            try {
+                    Thread.sleep(Constantes.DELAY_DE_THREADS);
+                } catch (InterruptedException e) {
+                    System.out.println("Thread-Ejecutor interumpido");
+                    Thread.currentThread().interrupt(); //Limpia la flag de interupción.
             }
         }
+       
+
         //Revisa la lista de mutantes A uno a uno y luego pasa por los de la lista B
         //Los guarda si el radio entre estos es radio + desplazamientoMaximo como maximo.
         //Inicia los ejecutadores y espera a que terminen
     }
 
+    public void iniciarEjecutores() {
+        
+    }
+
     public DatosPelea obtenerDatoCola() {
         return this.colaPeleas.poll();
+    }
+
+    public void agregarDatoCola(DatosPelea datosPelea) {
+        this.colaPeleas.add(datosPelea);
     }
 
     public void agregarPeleaLista(DatosPelea datoPelea) {

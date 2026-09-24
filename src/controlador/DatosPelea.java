@@ -5,21 +5,26 @@ import modelo.Mutante;
 import otros.Punto;
 
 public class DatosPelea {
-    private Mutante mutanteA;
+    private HiloMutante mutanteA;
     private EstadoMutante decisionA;
-    private Mutante mutanteB;
+    private HiloMutante mutanteB;
     private EstadoMutante decisionB;
     private Punto posA;
     private Punto posB;
 
     public DatosPelea(HiloMutante hiloMutanteA, HiloMutante hiloMutanteB) {
-        
-        this.mutanteA = hiloMutanteA.getMutante();
-        this.mutanteB = hiloMutanteB.getMutante();
-        
-       
+        this.mutanteA = hiloMutanteA;
+        this.mutanteB = hiloMutanteA;
     }
-    public Mutante getMutanteA() {
+
+    public void guardarDatos() {
+        this.decisionA = this.mutanteA.getEstado();
+        this.decisionB = this.mutanteB.getEstado();
+        this.posA = this.mutanteA.getMutante().getPosicion();
+        this.posB = this.mutanteB.getMutante().getPosicion();
+    }
+
+    public HiloMutante getMutanteA() {
         return this.mutanteA;
     }
 
@@ -27,7 +32,7 @@ public class DatosPelea {
         return this.decisionA;
     }
 
-    public Mutante getMutanteB() {
+    public HiloMutante getMutanteB() {
         return this.mutanteB;
     }
 

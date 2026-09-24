@@ -61,8 +61,15 @@ public class Mutante {
         return this.ataque;
     }
 
-    public int recibirDaño(int daño) {
-        int dañoReal = daño - this.defensa;
+    public void estadoDespuesAtaque(int dañoCausado) {
+        if (dañoCausado > 0 && this.ataque < Constantes.ATAQUE_MAXIMO) {
+            this.ataque++;
+        }
+    }
+
+    public int[] recibirDaño(int daño, boolean defiende) {
+        int modDefensa = defiende ? 1 : 0; //true = 1, false = 0
+        int dañoReal = daño - this.defensa*modDefensa;
         if (dañoReal < 0) {
             dañoReal = 0;
         }
@@ -70,7 +77,8 @@ public class Mutante {
         if (this.vida < 0) {
             this.vida = 0;
         }
-        return this.vida;
+        int[] retornado = {this.vida, dañoReal};
+        return retornado;
     }
 
     public boolean estaVivo() {
