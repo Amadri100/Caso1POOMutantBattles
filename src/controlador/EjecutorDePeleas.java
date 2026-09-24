@@ -5,6 +5,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import juego.TipoEquipo;
 import otros.Constantes;
@@ -18,7 +19,7 @@ public class EjecutorDePeleas implements Runnable {
     private ArrayList<EjecutarPeleas> listaEjecutores;
     private boolean procesados = false;
     private boolean activo = true;
-
+    private AtomicInteger tareasPendientes = new AtomicInteger(0); //Cuenta ejecutores activos
     public EjecutorDePeleas(Controlador controlador) {
         this.controlador = controlador;
         this.executorService =  (ThreadPoolExecutor)Executors.newFixedThreadPool(Constantes.CANTIDAD_THREADS);
@@ -26,7 +27,7 @@ public class EjecutorDePeleas implements Runnable {
         this.listaPeleasCompletadas = new CopyOnWriteArrayList<DatosPelea>();
         this.listaEjecutores = new ArrayList<EjecutarPeleas>();
         this.listaEjecutores = new ArrayList<EjecutarPeleas>();
-        for (int i = 0; i<listaEjecutores.size();i++){
+        for (int i = 0; i<Constantes.CANTIDAD_THREADS;i++){
             this.listaEjecutores.set(i, new EjecutarPeleas(this));
         }
     }
@@ -36,18 +37,29 @@ public class EjecutorDePeleas implements Runnable {
         while(activo) {
             if (!procesados) {
                 for (int i = 0 ; i < this.controlador.getListaHilosMutantes(TipoEquipo.EQUIPO_A).size(); i++) {
-                HiloMutante hiloA = this.controlador.getListaHilosMutantes(TipoEquipo.EQUIPO_A).get(i); 
-                for (int j = 0 ; j < this.controlador.getListaHilosMutantes(TipoEquipo.EQUIPO_B).size(); j++) {
-                    HiloMutante hiloB = this.controlador.getListaHilosMutantes(TipoEquipo.EQUIPO_B).get(j);
-                    double radio = Matematicas.calcularRadio(hiloA.getMutante().getPosicion(), hiloB.getMutante().getPosicion());
-                    if (radio <= Constantes.RADIO_MAXIMO + Constantes.VELOCIDAD) {
-                        DatosPelea pelea = new DatosPelea(hiloA, hiloB);
-                        this.colaPeleas.add(pelea);
+                    HiloMutante hiloA = this.controlador.getListaHilosMutantes(TipoEquipo.EQUIPO_A).get(i); 
+                    for (int j = 0 ; j < this.controlador.getListaHilosMutantes(TipoEquipo.EQUIPO_B).size(); j++) {
+                        HiloMutante hiloB = this.controlador.getListaHilosMutantes(TipoEquipo.EQUIPO_B).get(j);
+                        double radio = Matematicas.calcularRadio(hiloA.getMutante().getPosicion(), hiloB.getMutante().getPosicion());
+                        if (radio <= Constantes.RADIO_MAXIMO + Constantes.VELOCIDAD) {
+                            DatosPelea pelea = new DatosPelea(hiloA, hiloB);
+                            this.colaPeleas.add(pelea);
+                            this.tareasPendientes.incrementAndGet();
+                        }
                     }
                 }
+                for (EjecutarPeleas ejecutador : this.listaEjecutores) {
+                        
+                        ejecutador.iniciar(); //Hace todo el setup para prepararse para iniciar
+                        this.executorService.execute(ejecutador);
+                    }
                 this.procesados = !procesados;
+            }
+            else {
+                if (this.tareasPendientes.get() <= 0) {
+                    this.tareasPendientes.set(0);;
+                    this.procesados = !procesados;
                 }
-                
             }
             try {
                     Thread.sleep(Constantes.DELAY_DE_THREADS);
@@ -63,8 +75,12 @@ public class EjecutorDePeleas implements Runnable {
         //Inicia los ejecutadores y espera a que terminen
     }
 
-    public void iniciarEjecutores() {
-        
+    public int obtenerTotalTareas() {
+        return this.tareasPendientes.get();
+    }
+
+    public void tareaTerminada() { //Funcion usada por un ejecutador para indicar que se desconecta
+        this.tareasPendientes.decrementAndGet();
     }
 
     public DatosPelea obtenerDatoCola() {
@@ -87,7 +103,7 @@ public class EjecutorDePeleas implements Runnable {
         return this.colaPeleas;
     }
 
-    public void setActivo(boolean activo) {
+    public synchronized void setActivo(boolean activo) {
         this.activo = activo;
     }
     public boolean isActivo() {

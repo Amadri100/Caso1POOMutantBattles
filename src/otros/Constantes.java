@@ -7,7 +7,7 @@ public final class Constantes {
     public static final int SIZE_X  = 1000; //TEMP
     public static final int SIZE_Y  = 1000; //TEMP
     //public static final int CANTIDAD_EQUIPOS = 2; //Defecto = 2
-    public static final int CANTIDAD_THREADS = 4; //Defecto = 2
+    public static final int CANTIDAD_THREADS = 4; //Defecto = 4
 
     public static final int ATAQUE_MINIMO = 1; //Defecto = 1
     public static final int ATAQUE_MAXIMO_POR_DEFECTO = 3; //Defecto = 3

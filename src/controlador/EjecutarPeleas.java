@@ -23,7 +23,10 @@ public class EjecutarPeleas implements Runnable {
             if (datoPelea != null) {
                 procesarPelea(datoPelea);
             } else {
-               this.terminar(); //Cuando quedan pocos, se van apagando los threads
+                
+            }
+            if (this.ejecutor.obtenerTotalTareas() == 0) {
+                this.terminar(); //Cuando no quedan tareas pendientes termina
             }
             try {
                     Thread.sleep(Constantes.TIEMPO_ESPERA);
@@ -60,7 +63,7 @@ public class EjecutarPeleas implements Runnable {
             else {
                 //Se descarta la pelea
             }
-            
+            this.ejecutor.tareaTerminada();
         }
         else 
             valido = false;
