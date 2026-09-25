@@ -24,12 +24,14 @@ public final class Constantes {
 
     public static final int MAXIMO_VIDA  = 100; //Defecto = 100
 
+    public static final int CANTIDAD_EQUIPOS = 2; //Valor = 2
     public static final int CANTIDAD_MUTANTES_POR_DEFECTO = 8; //Defecto = 8
-   public static final int CANTIDAD_MUTANTES_MAXIMO = 11; //Defecto = 8
+    public static final int CANTIDAD_MUTANTES_MAXIMO = 11; //Defecto = 8
     public static final int CANTIDAD_MUTANTES_MINIMO = 3; //Defecto = 3
 
-
-    public static final String[] SIMBOLOS = {"A", "B"};
+    //No es recomendable cambiarlos
+    public static final int[] POSICION_ARREGLO = {0, 1}; //Defecto = {0,1}
+    public static final String[] SIMBOLOS = {"A", "B"}; //Defecto = {"A", "B"} 
 
     public static final double RADIO_MAXIMO = 5; //TEMP
 

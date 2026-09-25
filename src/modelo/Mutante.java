@@ -60,6 +60,10 @@ public class Mutante {
     public int atacar() {
         return this.ataque;
     }
+    
+    public int getVida() {
+        return this.vida;
+    }
 
     public void estadoDespuesAtaque(int dañoCausado) {
         if (dañoCausado > 0 && this.ataque < Constantes.ATAQUE_MAXIMO) {
@@ -67,9 +71,6 @@ public class Mutante {
         }
     }
 
-    public int getVida() {
-        return this.vida;
-    }
 
     public int[] recibirDaño(int daño, boolean defiende) {
         int modDefensa = defiende ? 1 : 0; //true = 1, false = 0

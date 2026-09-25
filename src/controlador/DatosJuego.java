@@ -3,33 +3,47 @@ package controlador;
 import juego.CampoDeBatalla;
 import juego.TipoEquipo;
 import modelo.Mutante;
+import otros.Constantes;
+
+import java.awt.Color;
+import java.io.Console;
 import java.util.ArrayList;
 
 public class DatosJuego {
     private ArrayList<HiloMutante> listaMutantes;
     private ArrayList<DatosPelea> listaPeleas;
     private String[] simboloPorEquipo;
+    private Color[] colorPorEquipo;
     // Pendiente agregar color
     public DatosJuego(Controlador controlador) {
         
         this.listaMutantes = new ArrayList<>();
         this.listaPeleas = new ArrayList<>();
         
-        int cantidadEquipos = 2; 
-        this.simboloPorEquipo = new String[cantidadEquipos];
+        this.simboloPorEquipo = new String[Constantes.CANTIDAD_EQUIPOS];
 
-        this.simboloPorEquipo[TipoEquipo.EQUIPO_A.getIndice()] = "A";
+        this.simboloPorEquipo[TipoEquipo.EQUIPO_A.getIndice()] = TipoEquipo.EQUIPO_A.getSimbolo();
 
-        this.simboloPorEquipo[TipoEquipo.EQUIPO_B.getIndice()] = "B";
-        /* 
-        if (campoDeBatalla != null) {
-            for (Mutante m : campoDeBatalla.getEquipoA().getListaMutantes()) {
-                this.listaMutantes.add(new HiloMutante(m));
+        this.simboloPorEquipo[TipoEquipo.EQUIPO_B.getIndice()] = TipoEquipo.EQUIPO_B.getSimbolo();
+
+        this.colorPorEquipo = controlador.getColor();
+
+        if (controlador != null) {
+            for (TipoEquipo tipo : TipoEquipo.values()) {
+                for (HiloMutante hilo : controlador.getListaHilosMutantes(tipo)) {
+                    this.listaMutantes.add(hilo);
+                }
             }
-            for (Mutante m : campoDeBatalla.getEquipoB().getListaMutantes()) {
-                this.listaMutantes.add(new HiloMutante(m));
+            if (controlador.getCampoDeBatalla() != null) {
+                this.colorPorEquipo[TipoEquipo.EQUIPO_A.getIndice()] =
+                    controlador.getCampoDeBatalla().getEquipoA().getColor();
+                this.colorPorEquipo[TipoEquipo.EQUIPO_B.getIndice()] =
+                    controlador.getCampoDeBatalla().getEquipoB().getColor();
             }
-        }*/
+            if (controlador.getEjecutorDePeleas() != null) {
+                this.listaPeleas.addAll(controlador.getEjecutorDePeleas().drenarPeleasCompletadas());
+            }
+        }
     }
 
     public ArrayList<Mutante> getListaMutantes() {

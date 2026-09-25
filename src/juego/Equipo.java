@@ -26,7 +26,9 @@ public class Equipo {
         this.simbolo = Constantes.SIMBOLOS[indiceEquipo];
         Random rand = new Random();
         this.color = Constantes.COLORES[rand.nextInt(Constantes.COLORES.length)][indiceEquipo];
-         
+        for (int i = 0; i < cantidad; i++) {
+            this.listaMutantes.add(new Mutante(i, "Mutante" + this.cualEquipo.getSimbolo() + i, this));
+        }
     }
 
     public void setColor(Color color) {

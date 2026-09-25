@@ -21,6 +21,7 @@ public class EjecutorDePeleas implements Runnable {
     private boolean activo = true;
     private volatile boolean pausado = false;
     private AtomicInteger tareasPendientes = new AtomicInteger(0); //Cuenta ejecutores activos
+
     public EjecutorDePeleas(Controlador controlador) {
         this.controlador = controlador;
         this.executorService =  (ThreadPoolExecutor)Executors.newFixedThreadPool(Constantes.CANTIDAD_THREADS);
@@ -36,30 +37,32 @@ public class EjecutorDePeleas implements Runnable {
     @Override
     public void run() {
         while(activo) {
-            if (!procesados) {
-                for (int i = 0 ; i < this.controlador.getListaHilosMutantes(TipoEquipo.EQUIPO_A).size(); i++) {
-                    HiloMutante hiloA = this.controlador.getListaHilosMutantes(TipoEquipo.EQUIPO_A).get(i); 
-                    for (int j = 0 ; j < this.controlador.getListaHilosMutantes(TipoEquipo.EQUIPO_B).size(); j++) {
-                        HiloMutante hiloB = this.controlador.getListaHilosMutantes(TipoEquipo.EQUIPO_B).get(j);
-                        double radio = Matematicas.calcularRadio(hiloA.getMutante().getPosicion(), hiloB.getMutante().getPosicion());
-                        if (radio <= Constantes.RADIO_MAXIMO + Constantes.VELOCIDAD) {
-                            DatosPelea pelea = new DatosPelea(hiloA, hiloB);
-                            this.colaPeleas.add(pelea);
-                            this.tareasPendientes.incrementAndGet();
+            if (!pausado) {
+                if (!procesados) {
+                    for (int i = 0 ; i < this.controlador.getListaHilosMutantes(TipoEquipo.EQUIPO_A).size(); i++) {
+                        HiloMutante hiloA = this.controlador.getListaHilosMutantes(TipoEquipo.EQUIPO_A).get(i); 
+                        for (int j = 0 ; j < this.controlador.getListaHilosMutantes(TipoEquipo.EQUIPO_B).size(); j++) {
+                            HiloMutante hiloB = this.controlador.getListaHilosMutantes(TipoEquipo.EQUIPO_B).get(j);
+                            double radio = Matematicas.calcularRadio(hiloA.getMutante().getPosicion(), hiloB.getMutante().getPosicion());
+                            if (radio <= Constantes.RADIO_MAXIMO + Constantes.VELOCIDAD) {
+                                DatosPelea pelea = new DatosPelea(hiloA, hiloB);
+                                this.colaPeleas.add(pelea);
+                                this.tareasPendientes.incrementAndGet();
+                            }
                         }
                     }
-                }
-                for (EjecutarPeleas ejecutador : this.listaEjecutores) {
-                        
-                        ejecutador.iniciar(); //Hace todo el setup para prepararse para iniciar
-                        this.executorService.execute(ejecutador);
-                    }
-                this.procesados = !procesados;
-            }
-            else {
-                if (this.tareasPendientes.get() <= 0) {
-                    this.tareasPendientes.set(0);;
+                    for (EjecutarPeleas ejecutador : this.listaEjecutores) {
+                            
+                            ejecutador.iniciar(); //Hace todo el setup para prepararse para iniciar
+                            this.executorService.execute(ejecutador);
+                        }
                     this.procesados = !procesados;
+                }
+                else {
+                    if (this.tareasPendientes.get() <= 0) {
+                        this.tareasPendientes.set(0);;
+                        this.procesados = !procesados;
+                    }
                 }
             }
             try {
@@ -102,6 +105,12 @@ public class EjecutorDePeleas implements Runnable {
 
     public ConcurrentLinkedQueue<DatosPelea> getColaPeleas() {
         return this.colaPeleas;
+    }
+
+    public ArrayList<DatosPelea> drenarPeleasCompletadas() {
+        ArrayList<DatosPelea> copia = new ArrayList<DatosPelea>(this.listaPeleasCompletadas);
+        this.listaPeleasCompletadas.removeAll(copia);
+        return copia;
     }
 
     public synchronized void setActivo(boolean activo) {

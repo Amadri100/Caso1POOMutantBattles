@@ -1,7 +1,5 @@
 package controlador;
 
-//import java.util.concurrent.ConcurrentLinkedQueue;
-
 import modelo.Mutante;
 import otros.Constantes;
 import otros.Matematicas;
@@ -13,7 +11,6 @@ public class EjecutarPeleas implements Runnable {
 
     public EjecutarPeleas(EjecutorDePeleas ejecutor) {
         this.ejecutor = ejecutor;
-        //this.referenciaCola = ejecutor.getColaPeleas();
     }
 
     @Override
@@ -58,6 +55,7 @@ public class EjecutarPeleas implements Runnable {
                         int[] res = mutanteA.recibirDaño(mutanteB.atacar(), !mutanteAAtaca);
                         mutanteB.estadoDespuesAtaque(res[1]);
                     }
+                    datoPelea.guardarDatos(); //Guarda los datos especificos de este momento en la clase
                     this.ejecutor.agregarPeleaLista(datoPelea); //Se inserta en la lista de finalizados
             }
             else {

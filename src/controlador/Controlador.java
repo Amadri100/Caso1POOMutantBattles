@@ -8,7 +8,9 @@ import modelo.Mutante;
 import juego.CampoDeBatalla;
 import juego.TipoEquipo;
 import  otros.Constantes;
+import otros.Matematicas;
 import controlador.HiloMutante;
+import java.awt.Color;
 import controlador.DatosJuego;
 
 public class Controlador implements IObservable {
@@ -20,8 +22,11 @@ public class Controlador implements IObservable {
     private CampoDeBatalla campoDeBatalla;
     private DatosJuego datosJuego;
     private boolean simulacionIniciada = false;
+    private Color[] colorSeleccionado;
+
     @SuppressWarnings("unchecked")
     public Controlador() {
+
         this.listaHilosMutantes = new ArrayList[TipoEquipo.values().length]; //Unchecked warning
         for (int i = 0; i < TipoEquipo.values().length; i++) {
             this.listaHilosMutantes[i] = new ArrayList<HiloMutante>();
@@ -30,7 +35,7 @@ public class Controlador implements IObservable {
         this.ejecutorDePeleas = new EjecutorDePeleas(this);
         this.notificador = new Notificador(this);
         this.executorService = (ThreadPoolExecutor) Executors.newCachedThreadPool();
-        
+        this.colorSeleccionado = Constantes.COLORES[Matematicas.intAleatorio(0, Constantes.COLORES.length)];
     }
     public void iniciarSimulacion(int cantidadPorEquipo) {
         this.iniciarJuego(cantidadPorEquipo);
@@ -105,6 +110,15 @@ public class Controlador implements IObservable {
             observador.actualizar(this.datosJuego);
         }
     }
+
+    public Color[] getColor() {
+        return this.colorSeleccionado;
+    }
+
+    public boolean isSimulacionIniciada() {
+        return this.simulacionIniciada;
+    }
+
 
     public CampoDeBatalla getCampoDeBatalla() {
         return this.campoDeBatalla;

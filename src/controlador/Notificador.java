@@ -14,7 +14,10 @@ public class Notificador implements Runnable{
     @Override
     public void run() {
         while(activo) {
-            controlador.notificar();
+            if (!pausado) {
+                controlador.notificar();
+            }
+            
             try {
                 Thread.sleep(Constantes.DELAY_DE_THREADS);
             } catch (InterruptedException e) {
