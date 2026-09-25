@@ -61,7 +61,15 @@ public class Controlador implements IObservable {
         
     }
 
-        // CAMBIO (UI): soporte para el botón "Pausar" / "Reanudar".
+    public void resetEstadoMutantes() {
+        for (TipoEquipo tipo : TipoEquipo.values()) {
+            for (HiloMutante hilo : this.listaHilosMutantes[tipo.getIndice()]) {
+                hilo.volverAEstadoBase();
+            }
+        }
+    }
+
+    
     public void pausar() {
         this.ejecutorDePeleas.setPausado(true);
         this.notificador.setPausado(true);

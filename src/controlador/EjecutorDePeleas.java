@@ -62,6 +62,7 @@ public class EjecutorDePeleas implements Runnable {
                     if (this.tareasPendientes.get() <= 0) {
                         this.tareasPendientes.set(0);;
                         this.procesados = !procesados;
+                        this.reiniciarMutantes();
                     }
                 }
             }
@@ -100,7 +101,7 @@ public class EjecutorDePeleas implements Runnable {
     }
 
     public void reiniciarMutantes() {
-
+        this.controlador.resetEstadoMutantes();
     }
 
     public ConcurrentLinkedQueue<DatosPelea> getColaPeleas() {
