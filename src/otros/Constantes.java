@@ -6,8 +6,8 @@ public final class Constantes {
     //Temp : Significa que no es fijo o es simplemente de prueba
     //Defecto: es el valor recomendado
     public static final int TIEMPO_ESPERA  = 10; //TEMP
-    public static final int SIZE_X  = 1000; //TEMP
-    public static final int SIZE_Y  = 1000; //TEMP
+    public static final int SIZE_X  = 700; //TEMP
+    public static final int SIZE_Y  = 600; //TEMP
     //public static final int CANTIDAD_EQUIPOS = 2; //Defecto = 2
     public static final int CANTIDAD_THREADS = 4; //Defecto = 4
 
@@ -15,9 +15,10 @@ public final class Constantes {
     public static final int ATAQUE_MAXIMO_POR_DEFECTO = 3; //Defecto = 3
     public static final int ATAQUE_MAXIMO = 7; //Defecto = 7, ataque maximo que puede alcanzar un enemigo
 
+    public static final int CANTIDAD_ESTADOS_MUTANTE = 1; //Defecto 1
+    public static final int CANTIDAD_DE_DECISIONES_MUTANTE = 2; //Defecto = 2
 
-
-    public static final int[] DIMENSIONES_PANTALLA = {700, 500}; //Defecto ={700, 500} {width, heigt}
+    public static final int[] DIMENSIONES_PANTALLA = {1100, 1100}; //Defecto ={700, 500} {width, heigt}
 
     public static final int VELOCIDAD = 3; //TEMP
     public static final int TAMAÑO_MINIMO = 3; //Defecto = 3

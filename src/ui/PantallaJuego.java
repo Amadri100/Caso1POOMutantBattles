@@ -153,14 +153,11 @@ public class PantallaJuego extends JPanel {
         g2.setFont(Constantes.FUENTE_INFORMACION);
 
         g2.drawString(
-                "Mutantes en pantalla: "
-                        + this.mutantesDibujados.size()
-                        + "  (vivos: "
-                        + vivos
-                        + ")",
-                Constantes.POSICION_X_INFO,
-                Constantes.POSICION_Y_INFO
-        );
+        "Mutantes vivos: "
+                + vivos,
+        Constantes.POSICION_X_INFO,
+        Constantes.POSICION_Y_INFO
+);
     }
 
     public ArrayList<MutantesDibujados> getMutantesDibujados() {

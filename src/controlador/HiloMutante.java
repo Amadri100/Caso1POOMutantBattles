@@ -1,5 +1,7 @@
 package controlador;
 import modelo.Mutante;
+import otros.Constantes;
+import otros.Matematicas;
 
 public class HiloMutante implements Runnable {
     private Mutante mutante;
@@ -12,6 +14,27 @@ public class HiloMutante implements Runnable {
         this.activo = true;
         this.estado = EstadoMutante.MOVIENDOSE;
         this.estaVivo = mutante != null && mutante.estaVivo();
+    }
+
+    @Override
+    public void run() {
+        while (this.mutante.estaVivo() && this.activo) {
+            
+            try {
+                Thread.sleep(1000); 
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void moverse() {
+
+    }
+    public void elegirAtaque() {
+        if (this.estado == EstadoMutante.MOVIENDOSE) {
+            this.estado = EstadoMutante.getEstadoAleatorio();
+        }
     }
 
     public Mutante getMutante() {
@@ -30,17 +53,7 @@ public class HiloMutante implements Runnable {
         this.activo = activo;
     }
 
-    @Override
-    public void run() {
-        while (this.mutante.estaVivo() && this.activo) {
-            
-            try {
-                Thread.sleep(1000); 
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+
 
     public void actualizar() {
         if (this.mutante != null) {

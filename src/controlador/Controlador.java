@@ -74,6 +74,9 @@ public class Controlador implements IObservable {
 
     public void reiniciar(int cantidadPorEquipo) {
         detener();
+        for (TipoEquipo tipo : TipoEquipo.values()) {
+            this.listaHilosMutantes[tipo.getIndice()].clear();
+        }
         this.ejecutorDePeleas = new EjecutorDePeleas(this);
         this.notificador = new Notificador(this);
         iniciarSimulacion(cantidadPorEquipo);
@@ -106,6 +109,9 @@ public class Controlador implements IObservable {
     @Override
     public void notificar() {
         this.obtenerDatosJuego();
+        if (this.campoDeBatalla != null) {
+            this.campoDeBatalla.getScoreBoard().actualizar(this.campoDeBatalla);
+        }
         for (IObservador observador : this.listaObservadores) {
             observador.actualizar(this.datosJuego);
         }
