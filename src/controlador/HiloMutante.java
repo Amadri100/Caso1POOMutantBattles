@@ -34,6 +34,10 @@ public class HiloMutante implements Runnable {
         }
     }
 
+    public void volverAEstadoBase() {
+        this.estado = EstadoMutante.MOVIENDOSE;
+    }
+
     public void moverse() {
     if (this.mutante != null && this.estado == EstadoMutante.MOVIENDOSE) {
         Punto posicionActual = this.mutante.getPosicion();
@@ -111,8 +115,6 @@ public class HiloMutante implements Runnable {
     public void setActivo(boolean activo) {
         this.activo = activo;
     }
-
-
 
     public void actualizar() {
         if (this.mutante != null) {
