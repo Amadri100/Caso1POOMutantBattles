@@ -18,6 +18,7 @@ public class DatosJuego {
         
         int cantidadEquipos = 2; 
         this.simboloPorEquipo = new String[cantidadEquipos];
+        this.colorPorEquipo = new Color[cantidadEquipos];
 
         this.simboloPorEquipo[TipoEquipo.EQUIPO_A.getIndice()] = "A";
         this.colorPorEquipo[TipoEquipo.EQUIPO_A.getIndice()] = Color.RED;
