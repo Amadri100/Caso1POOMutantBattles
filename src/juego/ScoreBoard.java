@@ -1,5 +1,7 @@
 package juego;
 
+import otros.Constantes;
+
 public class ScoreBoard {
     private int mutantesVivos;
     private int mutantesMuertos;
@@ -27,9 +29,9 @@ public class ScoreBoard {
     @Override
     public String toString() {
         String texto = 
-        "Mutantes vivos totales: " + this.mutantesVivos + '\n' +
-        "Mutantes muertos totales: " + this.mutantesMuertos+ '\n'  +
-        "Mutantes vivos Equipo A: " + this.mutantesEquipoA + '\n' +
+        "Mutantes vivos totales: " + this.mutantesVivos + Constantes.SEPARADOR_SCORE +
+        "Mutantes muertos totales: " + this.mutantesMuertos+ Constantes.SEPARADOR_SCORE  +
+        "Mutantes vivos Equipo A: " + this.mutantesEquipoA + Constantes.SEPARADOR_SCORE +
         "Mutantes vivos Equipo B: " + this.mutantesEquipoB;
         return texto;
     }

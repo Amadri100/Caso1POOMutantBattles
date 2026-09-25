@@ -75,6 +75,8 @@ public class VentanaPrincipal extends JFrame {
                 )
         );
 
+
+        //Crea un panel que almacena todos los controles del juego
         JPanel panelControles =
                 new JPanel(new FlowLayout(FlowLayout.LEFT));
 
@@ -87,6 +89,9 @@ public class VentanaPrincipal extends JFrame {
         panelControles.add(this.botonPausar);
         panelControles.add(this.botonReiniciar);
 
+
+
+        //Listeners
         this.botonIniciar.addActionListener(
                 e -> onIniciar()
         );
@@ -106,8 +111,8 @@ public class VentanaPrincipal extends JFrame {
         add(this.labelScore, BorderLayout.SOUTH);
     }
 
+    //Metodos que usan los listeners
     private void onIniciar() {
-
         int cantidad =
                 (Integer) this.spinnerCantidad.getValue();
 
@@ -120,40 +125,27 @@ public class VentanaPrincipal extends JFrame {
     }
 
     private void onPausar() {
-
         this.pausado = !this.pausado;
-
         if (this.pausado) {
-
             this.controlador.pausar();
-
             this.botonPausar.setText(
                     Constantes.TEXTO_REANUDAR
             );
-
         } else {
-
             this.controlador.reanudar();
-
             this.botonPausar.setText(
                     Constantes.TEXTO_PAUSAR
             );
         }
     }
-
     private void onReiniciar() {
-
         int cantidad =
                 (Integer) this.spinnerCantidad.getValue();
-
         this.controlador.reiniciar(cantidad);
-
         this.pausado = false;
-
         this.botonPausar.setText(
                 Constantes.TEXTO_PAUSAR
         );
-
         this.botonPausar.setEnabled(true);
     }
 
@@ -161,29 +153,18 @@ public class VentanaPrincipal extends JFrame {
      * Llamado por ObservadorUi, ya dentro del Event Dispatch Thread.
      */
     public void actualizar(DatosJuego datos) {
-
         this.pantallaJuego.actualizar(datos);
-
         if (this.controlador.getCampoDeBatalla() != null) {
-
             String score =
                     this.controlador
                             .getCampoDeBatalla()
                             .getScoreBoard()
-                            .toString()
-                            .replace(
-                                    "\n",
-                                    Constantes.SEPARADOR_SCORE
-                            );
-
+                            .toString();
             this.labelScore.setText(score);
-
             if (this.controlador
                     .getCampoDeBatalla()
                     .terminoElJuego()) {
-
                 this.botonPausar.setEnabled(false);
-
                 this.labelScore.setText(
                         score
                                 + Constantes.SEPARADOR_SCORE
