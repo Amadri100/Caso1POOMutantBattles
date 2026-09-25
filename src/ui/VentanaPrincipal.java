@@ -6,14 +6,13 @@ import otros.Constantes;
 
 import javax.swing.*;
 import java.awt.*;
-
 public class VentanaPrincipal extends JFrame {
 
     private JButton botonIniciar;
     private JButton botonPausar;
     private JButton botonReiniciar;
     private PantallaJuego pantallaJuego;
-
+    private JPanel gameContainer;
     private Controlador controlador;
     private ObservadorUi observador;
     private JSpinner spinnerCantidad;
@@ -39,8 +38,9 @@ public class VentanaPrincipal extends JFrame {
     }
 
     public void inicializarComponentes() {
-
+        this.setResizable(Constantes.RESIZABLE);
         this.pantallaJuego = new PantallaJuego(this);
+
 
         this.botonIniciar =
                 new JButton(Constantes.TEXTO_INICIAR);
@@ -84,6 +84,8 @@ public class VentanaPrincipal extends JFrame {
                 new JLabel(Constantes.TEXTO_MUTANTES_POR_EQUIPO)
         );
 
+
+
         panelControles.add(this.spinnerCantidad);
         panelControles.add(this.botonIniciar);
         panelControles.add(this.botonPausar);
@@ -106,8 +108,15 @@ public class VentanaPrincipal extends JFrame {
 
         setLayout(new BorderLayout());
 
+        this.gameContainer = new JPanel(new BorderLayout());
+        this.gameContainer.setBorder(BorderFactory.createEmptyBorder(Constantes.PADDING_PANTALLA, 
+                                                                Constantes.PADDING_PANTALLA, 
+                                                                Constantes.PADDING_PANTALLA,
+                                                                Constantes.PADDING_PANTALLA));
+        this.gameContainer.add(this.pantallaJuego, BorderLayout.CENTER);
+
         add(panelControles, BorderLayout.NORTH);
-        add(this.pantallaJuego, BorderLayout.CENTER);
+        add(this.gameContainer, BorderLayout.CENTER);
         add(this.labelScore, BorderLayout.SOUTH);
     }
 

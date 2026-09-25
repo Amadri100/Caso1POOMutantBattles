@@ -10,7 +10,9 @@ public final class Constantes {
     public static final int SIZE_Y  = 600; //TEMP
     //public static final int CANTIDAD_EQUIPOS = 2; //Defecto = 2
     public static final int CANTIDAD_THREADS = 4; //Defecto = 4
+    public static final int PADDING_PANTALLA = 20; //Defecto = 20
 
+    public static final boolean RESIZABLE = false; //Defecto = false, no esta creado para que lo sea.
     public static final int ATAQUE_MINIMO = 1; //Defecto = 1
     public static final int ATAQUE_MAXIMO_POR_DEFECTO = 3; //Defecto = 3
     public static final int ATAQUE_MAXIMO = 7; //Defecto = 7, ataque maximo que puede alcanzar un enemigo
