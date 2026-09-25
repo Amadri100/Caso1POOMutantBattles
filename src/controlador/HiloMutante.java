@@ -39,6 +39,7 @@ public class HiloMutante implements Runnable {
         Punto posicionActual = this.mutante.getPosicion();
         
         if (posicionActual != null) {
+            int velocidad = Constantes.VELOCIDAD;
             // se usa la clase Matematicas para generar un desplazamiento aleatorio de -1, 0 o 1
             int tipoMovimiento = Matematicas.intAleatorio(0, 2);
             
@@ -47,31 +48,48 @@ public class HiloMutante implements Runnable {
 
             switch (tipoMovimiento) {
                 case 0: // movimiento al centro
-                    desplazamientoX = Matematicas.intAleatorio(-1, 1);
-                    desplazamientoY = Matematicas.intAleatorio(-1, 1);
+                    desplazamientoX = Matematicas.intAleatorio(-1, 1) * velocidad;
+                    desplazamientoY = Matematicas.intAleatorio(-1, 1) * velocidad;
                     break;
-                    
+                        
                 case 1: // diagonales
-                    desplazamientoX = (Matematicas.intAleatorio(0, 1) == 0) ? 1 : -1;
-                    desplazamientoY = (Matematicas.intAleatorio(0, 1) == 0) ? 1 : -1;
+                    desplazamientoX = (Matematicas.intAleatorio(0, 1) == 0 ? 1 : -1) * velocidad;
+                    desplazamientoY = (Matematicas.intAleatorio(0, 1) == 0 ? 1 : -1) * velocidad;
                     break;
-                    
+                        
                 case 2: // paso hacia atrás
-                    desplazamientoX = Matematicas.intAleatorio(-1, 1) * -1;
-                    desplazamientoY = Matematicas.intAleatorio(-1, 1) * -1;
+                    desplazamientoX = Matematicas.intAleatorio(-1, 1) * -velocidad;
+                    desplazamientoY = Matematicas.intAleatorio(-1, 1) * -velocidad;
                     break;
             }
+        
             
             // se calcula la nueva posición
             int nuevoX = posicionActual.getX() + desplazamientoX;
             int nuevoY = posicionActual.getY() + desplazamientoY;
+            
+            // validación de límite de campo
+            int maxX = Constantes.SIZE_X;
+            int maxY = Constantes.SIZE_Y;
+            
+            if (nuevoX < 0) {
+                nuevoX = 0;
+            } else if (nuevoX > maxX) {
+                nuevoX = maxX;
+            }
+            
+            if (nuevoY < 0) {
+                nuevoY = 0;
+            } else if (nuevoY > maxY) {
+                nuevoY = maxY;
+            }
             
             // se actualiza la posición del mutante
             posicionActual.setX(nuevoX);
             posicionActual.setY(nuevoY);
         }
     }
-}
+    }
     public void elegirAtaque() {
         if (this.estado == EstadoMutante.MOVIENDOSE) {
             this.estado = EstadoMutante.getEstadoAleatorio();
