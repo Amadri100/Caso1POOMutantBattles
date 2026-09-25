@@ -67,6 +67,10 @@ public class Mutante {
         }
     }
 
+    public int getVida() {
+        return this.vida;
+    }
+
     public int[] recibirDaño(int daño, boolean defiende) {
         int modDefensa = defiende ? 1 : 0; //true = 1, false = 0
         int dañoReal = daño - this.defensa*modDefensa;

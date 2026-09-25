@@ -19,6 +19,7 @@ public class EjecutorDePeleas implements Runnable {
     private ArrayList<EjecutarPeleas> listaEjecutores;
     private boolean procesados = false;
     private boolean activo = true;
+    private volatile boolean pausado = false;
     private AtomicInteger tareasPendientes = new AtomicInteger(0); //Cuenta ejecutores activos
     public EjecutorDePeleas(Controlador controlador) {
         this.controlador = controlador;
@@ -28,7 +29,7 @@ public class EjecutorDePeleas implements Runnable {
         this.listaEjecutores = new ArrayList<EjecutarPeleas>();
         this.listaEjecutores = new ArrayList<EjecutarPeleas>();
         for (int i = 0; i<Constantes.CANTIDAD_THREADS;i++){
-            this.listaEjecutores.set(i, new EjecutarPeleas(this));
+            this.listaEjecutores.add(new EjecutarPeleas(this));
         }
     }
 
@@ -108,5 +109,13 @@ public class EjecutorDePeleas implements Runnable {
     }
     public boolean isActivo() {
         return this.activo;
+    }
+
+        public void setPausado(boolean pausado) {
+        this.pausado = pausado;
+    }
+
+    public boolean isPausado() {
+        return this.pausado;
     }
 }

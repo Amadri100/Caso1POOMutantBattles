@@ -19,7 +19,7 @@ public class Controlador implements IObservable {
     private ThreadPoolExecutor executorService;
     private CampoDeBatalla campoDeBatalla;
     private DatosJuego datosJuego;
-
+    private boolean simulacionIniciada = false;
     @SuppressWarnings("unchecked")
     public Controlador() {
         this.listaHilosMutantes = new ArrayList[TipoEquipo.values().length]; //Unchecked warning
@@ -32,6 +32,18 @@ public class Controlador implements IObservable {
         this.executorService = (ThreadPoolExecutor) Executors.newCachedThreadPool();
         
     }
+    public void iniciarSimulacion(int cantidadPorEquipo) {
+        this.iniciarJuego(cantidadPorEquipo);
+        for (TipoEquipo tipo : TipoEquipo.values()) {
+            for (HiloMutante hilo : this.getListaHilosMutantes(tipo)) {
+                this.executorService.execute(hilo);
+            }
+        }
+        this.executorService.execute(this.ejecutorDePeleas);
+        this.executorService.execute(this.notificador);
+        this.simulacionIniciada = true;
+    }
+
 
     public void iniciarJuego(int cantidad) {
         this.campoDeBatalla = new CampoDeBatalla(cantidad);
@@ -44,6 +56,34 @@ public class Controlador implements IObservable {
         
     }
 
+        // CAMBIO (UI): soporte para el botón "Pausar" / "Reanudar".
+    public void pausar() {
+        this.ejecutorDePeleas.setPausado(true);
+        this.notificador.setPausado(true);
+    }
+
+    public void reanudar() {
+        this.ejecutorDePeleas.setPausado(false);
+        this.notificador.setPausado(false);
+    }
+
+    public void reiniciar(int cantidadPorEquipo) {
+        detener();
+        this.ejecutorDePeleas = new EjecutorDePeleas(this);
+        this.notificador = new Notificador(this);
+        iniciarSimulacion(cantidadPorEquipo);
+    }
+
+    // CAMBIO (UI): detiene ordenadamente los hilos de la simulación actual.
+    public void detener() {
+        this.ejecutorDePeleas.setActivo(false);
+        this.notificador.setActivo(false);
+        for (TipoEquipo tipo : TipoEquipo.values()) {
+            for (HiloMutante hilo : this.getListaHilosMutantes(tipo)) {
+                hilo.setActivo(false);
+            }
+        }
+    }
     public void obtenerDatosJuego() {
         this.datosJuego = new DatosJuego(this);
     }

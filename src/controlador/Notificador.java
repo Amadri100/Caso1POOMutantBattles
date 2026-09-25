@@ -7,6 +7,7 @@ import otros.Constantes;
 public class Notificador implements Runnable{
     private Controlador controlador;
     private boolean activo = true;
+    private volatile boolean pausado = false;
     public Notificador(Controlador pControlador) {
         this.controlador = pControlador;
     }
@@ -28,4 +29,12 @@ public class Notificador implements Runnable{
     public boolean getActivo() {
         return this.activo;
     }
+    public void setPausado(boolean pausado) {
+        this.pausado = pausado;
+    }
+
+    public boolean isPausado() {
+        return this.pausado;
+    }
+
 }
