@@ -2,6 +2,7 @@ package controlador;
 import modelo.Mutante;
 import otros.Constantes;
 import otros.Matematicas;
+import otros.Punto;
 
 public class HiloMutante implements Runnable {
     private Mutante mutante;
@@ -15,11 +16,16 @@ public class HiloMutante implements Runnable {
         this.estado = EstadoMutante.MOVIENDOSE;
         this.estaVivo = mutante != null && mutante.estaVivo();
     }
+    
 
     @Override
     public void run() {
         while (this.mutante.estaVivo() && this.activo) {
             
+            moverse();
+            actualizar();
+
+
             try {
                 Thread.sleep(1000); 
             } catch (InterruptedException e) {
@@ -29,8 +35,43 @@ public class HiloMutante implements Runnable {
     }
 
     public void moverse() {
+    if (this.mutante != null && this.estado == EstadoMutante.MOVIENDOSE) {
+        Punto posicionActual = this.mutante.getPosicion();
+        
+        if (posicionActual != null) {
+            // se usa la clase Matematicas para generar un desplazamiento aleatorio de -1, 0 o 1
+            int tipoMovimiento = Matematicas.intAleatorio(0, 2);
+            
+            int desplazamientoX = 0;
+            int desplazamientoY = 0;
 
+            switch (tipoMovimiento) {
+                case 0: // movimiento al centro
+                    desplazamientoX = Matematicas.intAleatorio(-1, 1);
+                    desplazamientoY = Matematicas.intAleatorio(-1, 1);
+                    break;
+                    
+                case 1: // diagonales
+                    desplazamientoX = (Matematicas.intAleatorio(0, 1) == 0) ? 1 : -1;
+                    desplazamientoY = (Matematicas.intAleatorio(0, 1) == 0) ? 1 : -1;
+                    break;
+                    
+                case 2: // paso hacia atrás
+                    desplazamientoX = Matematicas.intAleatorio(-1, 1) * -1;
+                    desplazamientoY = Matematicas.intAleatorio(-1, 1) * -1;
+                    break;
+            }
+            
+            // se calcula la nueva posición
+            int nuevoX = posicionActual.getX() + desplazamientoX;
+            int nuevoY = posicionActual.getY() + desplazamientoY;
+            
+            // se actualiza la posición del mutante
+            posicionActual.setX(nuevoX);
+            posicionActual.setY(nuevoY);
+        }
     }
+}
     public void elegirAtaque() {
         if (this.estado == EstadoMutante.MOVIENDOSE) {
             this.estado = EstadoMutante.getEstadoAleatorio();
