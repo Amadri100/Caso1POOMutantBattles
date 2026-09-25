@@ -8,6 +8,7 @@ import otros.Constantes;
 import java.awt.Color;
 import java.io.Console;
 import java.util.ArrayList;
+import java.awt.Color; // Este import es necesario para usar la clase Color
 
 public class DatosJuego {
     private ArrayList<HiloMutante> listaMutantes;
@@ -44,6 +45,10 @@ public class DatosJuego {
                 this.listaPeleas.addAll(controlador.getEjecutorDePeleas().drenarPeleasCompletadas());
             }
         }
+    }
+    
+    public Color[] getColorPorEquipo() {
+        return this.colorPorEquipo;
     }
 
     public ArrayList<Mutante> getListaMutantes() {
