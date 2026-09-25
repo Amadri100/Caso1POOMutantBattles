@@ -4,12 +4,13 @@ import juego.CampoDeBatalla;
 import juego.TipoEquipo;
 import modelo.Mutante;
 import java.util.ArrayList;
+import java.awt.Color; // Este import es necesario para usar la clase Color
 
 public class DatosJuego {
     private ArrayList<HiloMutante> listaMutantes;
     private ArrayList<DatosPelea> listaPeleas;
     private String[] simboloPorEquipo;
-    // Pendiente agregar color
+    private Color[] colorPorEquipo;
     public DatosJuego(Controlador controlador) {
         
         this.listaMutantes = new ArrayList<>();
@@ -19,8 +20,9 @@ public class DatosJuego {
         this.simboloPorEquipo = new String[cantidadEquipos];
 
         this.simboloPorEquipo[TipoEquipo.EQUIPO_A.getIndice()] = "A";
-
+        this.colorPorEquipo[TipoEquipo.EQUIPO_A.getIndice()] = Color.RED;
         this.simboloPorEquipo[TipoEquipo.EQUIPO_B.getIndice()] = "B";
+        this.colorPorEquipo[TipoEquipo.EQUIPO_B.getIndice()] = Color.BLUE;
         /* 
         if (campoDeBatalla != null) {
             for (Mutante m : campoDeBatalla.getEquipoA().getListaMutantes()) {
@@ -30,6 +32,10 @@ public class DatosJuego {
                 this.listaMutantes.add(new HiloMutante(m));
             }
         }*/
+    }
+    
+    public Color[] getColorPorEquipo() {
+        return this.colorPorEquipo;
     }
 
     public ArrayList<Mutante> getListaMutantes() {
