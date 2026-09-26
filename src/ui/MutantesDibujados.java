@@ -1,178 +1,88 @@
 package ui;
 
+import java.awt.Color;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
+
 import modelo.Mutante;
 import otros.Constantes;
 import otros.Punto;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-
+// Nota: el spec original preveía campos JLabel/ImageIcon, pero no hay rutas
+// de imágenes reales (Constantes.RUTA_IMAGENES_MUTANTES son placeholders
+// "TEMP"), así que el mutante se dibuja directamente con Graphics2D
+// (círculo + símbolo + nombre + barra de vida) en lugar de un ImageIcon.
 public class MutantesDibujados {
-
     private Mutante mutante;
-    private JLabel jLabel;
-    private ImageIcon imagen;
 
     public MutantesDibujados(Mutante mutante) {
         this.mutante = mutante;
-        this.imagen = generarImagen();
-        this.jLabel = new JLabel(this.imagen);
-
-        this.jLabel.setSize(
-                Constantes.DIAMETRO_MUTANTE,
-                Constantes.DIAMETRO_MUTANTE
-        );
     }
 
-    private ImageIcon generarImagen() {
-
-        BufferedImage img = new BufferedImage(
-                Constantes.DIAMETRO_MUTANTE,
-                Constantes.DIAMETRO_MUTANTE,
-                BufferedImage.TYPE_INT_ARGB
-        );
-
-        Graphics2D g2 = img.createGraphics();
-
-        g2.setRenderingHint(
-                RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_ON
-        );
-
-        Color color = this.mutante.getEquipo().getColor();
-
-        g2.setColor(
-                color != null
-                        ? color
-                        : Constantes.COLOR_MUTANTE_SIN_EQUIPO
-        );
-
-        g2.fillOval(
-                0,
-                0,
-                Constantes.DIAMETRO_MUTANTE - 1,
-                Constantes.DIAMETRO_MUTANTE - 1
-        );
-
-        g2.setColor(Constantes.COLOR_BORDE_MUTANTE);
-
-        g2.drawOval(
-                0,
-                0,
-                Constantes.DIAMETRO_MUTANTE - 1,
-                Constantes.DIAMETRO_MUTANTE - 1
-        );
-
-        g2.setColor(Constantes.COLOR_SIMBOLO_MUTANTE);
-
-        g2.setFont(Constantes.FUENTE_SIMBOLO);
-
-        String simbolo = this.mutante.getEquipo().getSimbolo();
-
-        FontMetrics fm = g2.getFontMetrics();
-
-        int tx = (
-                Constantes.DIAMETRO_MUTANTE
-                - fm.stringWidth(simbolo)
-        ) / 2;
-
-        int ty = (
-                Constantes.DIAMETRO_MUTANTE
-                - fm.getHeight()
-        ) / 2 + fm.getAscent();
-
-        g2.drawString(simbolo, tx, ty);
-
-        g2.dispose();
-
-        return new ImageIcon(img);
-    }
-
-    public void dibujar(Graphics g) {
-
-        if (!this.mutante.estaVivo()) {
+    public void dibujar(Graphics2D g) {
+        if (this.mutante == null || !this.mutante.estaVivo()) {
             return;
         }
+        Punto posicion = this.mutante.getPosicion();
+        int diametro = Constantes.DIAMETRO_MUTANTE;
+        int x = posicion.getX() - diametro / 2;
+        int y = posicion.getY() - diametro / 2;
 
-        Punto p = mutante.getPosicion();
+        Color colorEquipo = this.mutante.getEquipo() != null
+            ? this.mutante.getEquipo().getColor()
+            : Constantes.COLOR_MUTANTE_SIN_EQUIPO;
 
-        int x = p.getX() - Constantes.DIAMETRO_MUTANTE / 2;
-        int y = p.getY() - Constantes.DIAMETRO_MUTANTE / 2;
+        dibujarBarraVida(g, x, y, diametro);
 
-        g.drawImage(
-                imagen.getImage(),
-                x,
-                y,
-                null
-        );
+        g.setColor(colorEquipo);
+        g.fillOval(x, y, diametro, diametro);
+        g.setColor(Constantes.COLOR_BORDE_MUTANTE);
+        g.drawOval(x, y, diametro, diametro);
 
-        // Barra de vida
-        int vidaMax = Constantes.MAXIMO_VIDA;
-        int vidaActual = Math.max(0, mutante.getVida());
-
-        int anchoLleno = vidaMax > 0
-                ? (int) (
-                        Constantes.DIAMETRO_MUTANTE
-                        * (vidaActual / (double) vidaMax)
-                )
-                : 0;
-
-        g.setColor(Constantes.COLOR_BARRA_VIDA_FONDO);
-
-        g.fillRect(
-                x,
-                y - Constantes.SEPARACION_BARRA_VIDA,
-                Constantes.DIAMETRO_MUTANTE,
-                Constantes.ALTURA_BARRA_VIDA
-        );
-
-        g.setColor(
-                vidaActual > vidaMax * Constantes.PORCENTAJE_VIDA_BAJA
-                        ? Constantes.COLOR_BARRA_VIDA_ALTA
-                        : Constantes.COLOR_BARRA_VIDA_BAJA
-        );
-
-        g.fillRect(
-                x,
-                y - Constantes.SEPARACION_BARRA_VIDA,
-                anchoLleno,
-                Constantes.ALTURA_BARRA_VIDA
-        );
-
-        g.setColor(Constantes.COLOR_NOMBRE_MUTANTE);
+        String simbolo = this.mutante.getEquipo() != null ? this.mutante.getEquipo().getSimbolo() : "?";
+        g.setFont(Constantes.FUENTE_SIMBOLO);
+        g.setColor(Constantes.COLOR_SIMBOLO_MUTANTE);
+        FontMetrics metricas = g.getFontMetrics();
+        int simboloX = x + (diametro - metricas.stringWidth(simbolo)) / 2;
+        int simboloY = y + (diametro + metricas.getAscent()) / 2 - 2;
+        g.drawString(simbolo, simboloX, simboloY);
 
         g.setFont(Constantes.FUENTE_NOMBRE);
-
+        g.setColor(Constantes.COLOR_NOMBRE_MUTANTE);
         g.drawString(
-                mutante.getNombre(),
-                x - Constantes.AJUSTE_X_NOMBRE,
-                y + Constantes.DIAMETRO_MUTANTE
-                        + Constantes.SEPARACION_Y_NOMBRE
+            this.mutante.getNombre(),
+            x - Constantes.AJUSTE_X_NOMBRE,
+            y + diametro + Constantes.SEPARACION_Y_NOMBRE
         );
+    }
+
+    private void dibujarBarraVida(Graphics2D g, int x, int y, int diametro) {
+        int barraY = y - Constantes.SEPARACION_BARRA_VIDA;
+        g.setColor(Constantes.COLOR_BARRA_VIDA_FONDO);
+        g.fillRect(x, barraY, diametro, Constantes.ALTURA_BARRA_VIDA);
+
+        double porcentajeVida = this.mutante.getVida() / (double) Constantes.MAXIMO_VIDA;
+        Color colorVida = porcentajeVida <= Constantes.PORCENTAJE_VIDA_BAJA
+            ? Constantes.COLOR_BARRA_VIDA_BAJA
+            : Constantes.COLOR_BARRA_VIDA_ALTA;
+        g.setColor(colorVida);
+        int anchoVida = (int) Math.round(diametro * Math.max(0, Math.min(1, porcentajeVida)));
+        g.fillRect(x, barraY, anchoVida, Constantes.ALTURA_BARRA_VIDA);
     }
 
     public Punto obtenerPosicion() {
-        return this.mutante.getPosicion();
+        return this.mutante != null ? this.mutante.getPosicion() : null;
     }
 
     @Override
     public String toString() {
-        return this.mutante.getNombre()
-                + " ["
-                + this.mutante.getEquipo().getSimbolo()
-                + "]";
+        if (this.mutante == null) {
+            return "MutanteDibujado vacio";
+        }
+        return this.mutante.getNombre() + " (vida=" + this.mutante.getVida() + ")";
     }
 
     public Mutante getMutante() {
         return this.mutante;
-    }
-
-    public JLabel getJLabel() {
-        return this.jLabel;
-    }
-
-    public ImageIcon getImagen() {
-        return this.imagen;
     }
 }

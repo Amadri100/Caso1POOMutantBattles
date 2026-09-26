@@ -1,5 +1,16 @@
 package ui;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.swing.JPanel;
+
 import controlador.DatosAtaque;
 import controlador.DatosJuego;
 import controlador.DatosPelea;
@@ -7,15 +18,7 @@ import controlador.EstadoMutante;
 import modelo.Mutante;
 import otros.Constantes;
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
 public class PantallaJuego extends JPanel {
-
     private ArrayList<MutantesDibujados> mutantesDibujados;
     private VentanaPrincipal principal;
     private ArrayList<AnimacionAtaque> ataquesActivos;
@@ -26,138 +29,91 @@ public class PantallaJuego extends JPanel {
         this.mutantesDibujados = new ArrayList<>();
         this.ataquesActivos = new ArrayList<>();
         this.infoVisible = true;
-
+        setPreferredSize(new Dimension(
+            Constantes.SIZE_X + Constantes.PADDING_PANTALLA * 2,
+            Constantes.SIZE_Y + Constantes.PADDING_PANTALLA * 2
+        ));
         setBackground(Constantes.BACKGROUND);
-
-        setPreferredSize(
-                new Dimension(
-                        Constantes.DIMENSIONES_PANTALLA[0],
-                        Constantes.DIMENSIONES_PANTALLA[1]
-                )
-        );
-
-        // Timer propio de repintado, independiente de cada cuánto llega
-        // una notificación del modelo.
-        new Timer(
-                Constantes.TASA_REFRESCO_PANTALLA,
-                e -> repaint()
-        ).start();
     }
 
-    /**
-     * Se llama desde ObservadorUi/VentanaPrincipal
-     * cada vez que hay datos nuevos.
-     */
+    // Invocado (en el EDT) cada vez que llega una notificación del Controlador.
     public void actualizar(DatosJuego datos) {
-
         if (datos == null) {
             return;
         }
-
-        // Reutiliza los MutantesDibujados existentes por id,
-        // para no recrear el ícono de un mutante que sigue vivo.
-        Map<Integer, MutantesDibujados> existentes = new HashMap<>();
-
-        for (MutantesDibujados md : this.mutantesDibujados) {
-            existentes.put(md.getMutante().getId(), md);
-        }
-
-        ArrayList<MutantesDibujados> nuevaLista = new ArrayList<>();
-
-        for (Mutante m : datos.getListaMutantes()) {
-
-            MutantesDibujados md = existentes.get(m.getId());
-
-            if (md == null) {
-                md = new MutantesDibujados(m);
-            }
-
-            nuevaLista.add(md);
-        }
-
-        this.mutantesDibujados = nuevaLista;
-
-        // Convierte cada pelea ya resuelta en una animación
-        // por cada mutante que efectivamente haya atacado.
-        for (DatosPelea pelea : datos.getListaPeleas()) {
-
-            if (pelea.getDecisionA() == EstadoMutante.ATAQUE) {
-                agregarAnimacionAtaque(
-                        new DatosAtaque(pelea, 1)
-                );
-            }
-
-            if (pelea.getDecisionB() == EstadoMutante.ATAQUE) {
-                agregarAnimacionAtaque(
-                        new DatosAtaque(pelea, 2)
-                );
-            }
-        }
-
+        sincronizarMutantes(datos.getListaMutantes());
+        agregarNuevasAnimaciones(datos.getListaPeleas());
         repaint();
     }
 
-    public void agregarAnimacionAtaque(DatosAtaque ataque) {
-        this.ataquesActivos.add(
-                new AnimacionAtaque(ataque, this)
-        );
+    private void sincronizarMutantes(ArrayList<Mutante> mutantes) {
+        Map<Integer, MutantesDibujados> existentes = new HashMap<>();
+        for (MutantesDibujados dibujado : this.mutantesDibujados) {
+            existentes.put(claveMutante(dibujado.getMutante()), dibujado);
+        }
+        ArrayList<MutantesDibujados> nuevaLista = new ArrayList<>();
+        for (Mutante mutante : mutantes) {
+            MutantesDibujados dibujado = existentes.get(claveMutante(mutante));
+            if (dibujado == null) {
+                dibujado = new MutantesDibujados(mutante);
+            }
+            nuevaLista.add(dibujado);
+        }
+        this.mutantesDibujados = nuevaLista;
+    }
+
+    // El id de Mutante reinicia en 0 por cada equipo, así que se combina con
+    // el índice de equipo para tener una clave única entre A y B.
+    private int claveMutante(Mutante mutante) {
+        return mutante.getEquipo().getTipoEquipo().getIndice() * 1000 + mutante.getId();
+    }
+
+    private void agregarNuevasAnimaciones(ArrayList<DatosPelea> peleas) {
+        if (peleas == null) {
+            return;
+        }
+        for (DatosPelea pelea : peleas) {
+            if (pelea.getDecisionA() == EstadoMutante.ATAQUE) {
+                agregarAnimacionAtaque(new DatosAtaque(pelea, 1));
+            }
+            if (pelea.getDecisionB() == EstadoMutante.ATAQUE) {
+                agregarAnimacionAtaque(new DatosAtaque(pelea, 2));
+            }
+        }
     }
 
     @Override
     protected void paintComponent(Graphics g) {
-
         super.paintComponent(g);
-
         Graphics2D g2 = (Graphics2D) g;
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        g2.setRenderingHint(
-                RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_ON
-        );
+        int padding = Constantes.PADDING_PANTALLA;
+        g2.translate(padding, padding);
 
-        for (MutantesDibujados md : this.mutantesDibujados) {
-            md.dibujar(g2);
+        g2.setColor(Color.LIGHT_GRAY);
+        g2.drawRect(0, 0, Constantes.SIZE_X, Constantes.SIZE_Y);
+
+        for (MutantesDibujados dibujado : this.mutantesDibujados) {
+            dibujado.dibujar(g2);
         }
 
-        Iterator<AnimacionAtaque> it =
-                this.ataquesActivos.iterator();
-
-        while (it.hasNext()) {
-
-            AnimacionAtaque anim = it.next();
-
-            if (anim.isTerminada()) {
-                it.remove();
-            } else {
-                anim.dibujar(g2);
+        ArrayList<AnimacionAtaque> terminadas = new ArrayList<>();
+        for (AnimacionAtaque animacion : this.ataquesActivos) {
+            animacion.dibujar(g2);
+            if (animacion.isTerminada()) {
+                terminadas.add(animacion);
             }
         }
+        this.ataquesActivos.removeAll(terminadas);
+
+        g2.translate(-padding, -padding);
 
         if (this.infoVisible) {
-            dibujarInfo(g2);
+            g2.setFont(Constantes.FUENTE_INFORMACION);
+            g2.setColor(Color.DARK_GRAY);
+            g2.drawString(Constantes.TEXTO_INSTRUCCIONES, Constantes.POSICION_X_INFO, Constantes.POSICION_Y_INFO);
         }
-    }
-
-    private void dibujarInfo(Graphics2D g2) {
-
-        int vivos = 0;
-
-        for (MutantesDibujados md : this.mutantesDibujados) {
-
-            if (md.getMutante().estaVivo()) {
-                vivos++;
-            }
-        }
-
-        g2.setColor(Color.WHITE);
-        g2.setFont(Constantes.FUENTE_INFORMACION);
-
-        g2.drawString(
-        "Mutantes vivos: "
-                + vivos,
-        Constantes.POSICION_X_INFO,
-        Constantes.POSICION_Y_INFO
-);
     }
 
     public ArrayList<MutantesDibujados> getMutantesDibujados() {
@@ -178,6 +134,9 @@ public class PantallaJuego extends JPanel {
 
     public void setInfoVisible(boolean infoVisible) {
         this.infoVisible = infoVisible;
-        repaint();
+    }
+
+    public void agregarAnimacionAtaque(DatosAtaque ataque) {
+        this.ataquesActivos.add(new AnimacionAtaque(this, ataque));
     }
 }
