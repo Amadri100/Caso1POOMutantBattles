@@ -156,5 +156,5 @@ public class Controlador implements IObservable {
 
     public int[] getMedidasCampoBatalla() {
         return new int[] { this.campoDeBatalla.getSizeX(), this.campoDeBatalla.getSizeY() };
-    }
+    }//Pullprueba
 }
