@@ -35,6 +35,13 @@ public class EjecutarPeleas implements Runnable {
     }
 
     private void procesarPelea(DatosPelea datoPelea) {
+        if (!datoPelea.getMutanteA().isEstaVivo() || !datoPelea.getMutanteB().isEstaVivo()) {
+        // Uno de los dos mutantes murió mientras la pelea esperaba en la cola entonces
+        // se descarta sin reinsertar para no dejar la tarea pendiente para siempre
+        this.ejecutor.tareaTerminada();
+        return;
+        }
+
         boolean valido = true;
         if (datoPelea.getMutanteA().getEstado() != EstadoMutante.MOVIENDOSE &&
             datoPelea.getMutanteB().getEstado() != EstadoMutante.MOVIENDOSE) {

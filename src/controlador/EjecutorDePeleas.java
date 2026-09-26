@@ -43,6 +43,9 @@ public class EjecutorDePeleas implements Runnable {
                         HiloMutante hiloA = this.controlador.getListaHilosMutantes(TipoEquipo.EQUIPO_A).get(i); 
                         for (int j = 0 ; j < this.controlador.getListaHilosMutantes(TipoEquipo.EQUIPO_B).size(); j++) {
                             HiloMutante hiloB = this.controlador.getListaHilosMutantes(TipoEquipo.EQUIPO_B).get(j);
+                            if (!hiloA.isEstaVivo() || !hiloB.isEstaVivo()) {
+                                continue; // para no armar peleas con mutantes muertos
+                            }
                             double radio = Matematicas.calcularRadio(hiloA.getMutante().getPosicion(), hiloB.getMutante().getPosicion());
                             if (radio <= Constantes.RADIO_MAXIMO + Constantes.VELOCIDAD) {
                                 DatosPelea pelea = new DatosPelea(hiloA, hiloB);
