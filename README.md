@@ -484,17 +484,43 @@ src/
 
 # UML
 ```
-@startuml DiagramaClases
+startuml BatallaDeMutantes
 
 skinparam classAttributeIconSize 0
 skinparam packageStyle rectangle
 hide empty members
 
+' ============================================================
+' PAQUETE modelo
+' ============================================================
 package modelo {
 
     interface IPower {
         + usarPoder() : void
         + nombrePoder() : String
+    }
+
+    class Mutante {
+        - id : int
+        - nombre : String
+        - equipo : Equipo
+        - vida : int
+        - poder : IPower
+        - posicion : Punto
+        - ataque : int
+        - defensa : int
+        + Mutante(id : int, nombre : String, equipo : Equipo)
+        + getId() : int
+        + getNombre() : String
+        + getEquipo() : Equipo
+        + getPoder() : IPower
+        + moverse(posicion : Punto) : void
+        + getPosicion() : Punto
+        + getVida() : int
+        + atacar() : int
+        + estadoDespuesAtaque(dañoCausado : int) : void
+        + recibirDaño(daño : int, defiende : boolean) : int[]
+        + estaVivo() : boolean
     }
 
     class PoderFuego implements IPower {
@@ -527,25 +553,8 @@ package modelo {
         + nombrePoder() : String
     }
 
-    class Mutante {
-        - id : int
-        - nombre : String
-        - equipo : Equipo
-        - vida : int
-        - poder : IPower
-        - posicion : Punto
-        - ataque : int
-        - defensa : int
-        + Mutante(id : int, nombre : String, equipo : Equipo)
-        + getId() : int
-        + getNombre() : String
-        + getEquipo() : Equipo
-        + getPoder() : IPower
-        + moverse(posicion : Punto) : void
-        + getPosicion() : Punto
-        + atacar() : int
-        + recibirDaño(daño : int) : int
-        + estaVivo() : boolean
+    class PoderAleatorio <<final>> {
+        + {static} poderAleatorio() : IPower
     }
 
     class PruebaModelo {
@@ -553,15 +562,22 @@ package modelo {
     }
 
     Mutante "1" *-- "1" IPower : poder >
-    Mutante "1" o-- "1" modelo.Mutante : usa Punto <
-
+    Mutante ..> otros.Punto : posicion
+    Mutante ..> juego.Equipo : equipo
+    PoderAleatorio ..> IPower : crea >
+    PoderAleatorio ..> otros.Matematicas : usa >
 }
 
+' ============================================================
+' PAQUETE juego
+' ============================================================
 package juego {
 
     enum TipoEquipo {
         EQUIPO_A
         EQUIPO_B
+        + getIndice() : int
+        + getSimbolo() : String
     }
 
     class Equipo {
@@ -569,6 +585,8 @@ package juego {
         - cualEquipo : TipoEquipo
         - simbolo : String
         - color : Color
+        - cantidadMutantesVivos : int
+        - cantidadMutantesMuertos : int
         + Equipo(equipo : TipoEquipo, cantidad : int)
         + setColor(color : Color) : void
         + setSimbolo(simbolo : String) : void
@@ -576,6 +594,9 @@ package juego {
         + getSimbolo() : String
         + getListaMutantes() : ArrayList<Mutante>
         + getTipoEquipo() : TipoEquipo
+        + getCantidadMutantesVivos() : int
+        + getCantidadMutantesMuertos() : int
+        + registrarMuerte(dato : TipoEquipo) : void
     }
 
     class CampoDeBatalla {
@@ -584,13 +605,15 @@ package juego {
         - equipoA : Equipo
         - equipoB : Equipo
         - scoreBoard : ScoreBoard
-        + CampoDeBatalla(sizeX : int, sizeY : int)
-        + crearEquipos(size : int) : void
+        + CampoDeBatalla(size : int)
         + terminoElJuego() : boolean
         + getPuntoMedio() : Punto
         + getPuntoMaximo() : Punto
         + getEquipoA() : Equipo
         + getEquipoB() : Equipo
+        + getCantidadMutantesVivos() : int[]
+        + getCantidadMutantesMuertos() : int[]
+        + actualizarScoreBoard() : void
         + getScoreBoard() : ScoreBoard
         + getSizeX() : int
         + getSizeY() : int
@@ -601,8 +624,8 @@ package juego {
         - mutantesMuertos : int
         - mutantesEquipoA : int
         - mutantesEquipoB : int
-        + ScoreBoard(equipoA : Equipo, equipoB : Equipo)
-        + actualizar(equipoA : Equipo, equipoB : Equipo) : void
+        + ScoreBoard(campo : CampoDeBatalla)
+        + actualizar(campo : CampoDeBatalla) : void
         + toString() : String
         + getMutantesVivos() : int
         + getMutantesMuertos() : int
@@ -614,20 +637,120 @@ package juego {
         + {static} main(args : String[]) : void
     }
 
-    Equipo "1" -- "*" modelo.Mutante : contiene >
-    Equipo "1" -- "1" TipoEquipo
+    Equipo "1" o-- "*" modelo.Mutante : listaMutantes
+    Equipo --> TipoEquipo : cualEquipo
     CampoDeBatalla "1" *-- "2" Equipo
     CampoDeBatalla "1" *-- "1" ScoreBoard
-    ScoreBoard ..> Equipo : usa
-
+    ScoreBoard ..> CampoDeBatalla : actualiza >
 }
 
+' ============================================================
+' PAQUETE controlador
+' ============================================================
 package controlador {
 
     enum EstadoMutante {
         MOVIENDOSE
         ATAQUE
         DEFENSA
+        + {static} getEstadoAleatorio() : EstadoMutante
+    }
+
+    class HiloMutante implements Runnable {
+        - controlador : Controlador
+        - estaVivo : boolean
+        - estado : EstadoMutante
+        - mutante : modelo.Mutante
+        - activo : boolean
+        + HiloMutante(mutante : modelo.Mutante, controlador : Controlador)
+        + run() : void
+        + moverse() : void
+        + elegirAtaque() : void
+        + volverAEstadoBase() : void
+        + actualizar() : void
+        + getMutante() : modelo.Mutante
+        + getEstado() : EstadoMutante
+        + isEstaVivo() : boolean
+        + isActivo() : boolean
+        + setActivo(activo : boolean) : void
+    }
+
+    class DatosPelea {
+        - mutanteA : HiloMutante
+        - decisionA : EstadoMutante
+        - mutanteB : HiloMutante
+        - decisionB : EstadoMutante
+        - posA : otros.Punto
+        - posB : otros.Punto
+        + DatosPelea(hiloMutanteA : HiloMutante, hiloMutanteB : HiloMutante)
+        + guardarDatos() : void
+        + getMutanteA() : HiloMutante
+        + getDecisionA() : EstadoMutante
+        + getMutanteB() : HiloMutante
+        + getDecisionB() : EstadoMutante
+        + getPosA() : otros.Punto
+        + getPosB() : otros.Punto
+    }
+
+    class EjecutarPeleas implements Runnable {
+        - ejecutor : EjecutorDePeleas
+        - activo : boolean
+        + EjecutarPeleas(ejecutor : EjecutorDePeleas)
+        + run() : void
+        - procesarPelea(datoPelea : DatosPelea) : void
+        + isActivo() : boolean
+        + iniciar() : void
+        + terminar() : void
+    }
+
+    class EjecutorDePeleas implements Runnable {
+        - controlador : Controlador
+        - executorService : ThreadPoolExecutor
+        - colaPeleas : ConcurrentLinkedQueue<DatosPelea>
+        - listaPeleasCompletadas : CopyOnWriteArrayList<DatosPelea>
+        - listaEjecutores : ArrayList<EjecutarPeleas>
+        - procesados : boolean
+        - activo : boolean
+        - pausado : boolean
+        - tareasPendientes : AtomicInteger
+        + EjecutorDePeleas(controlador : Controlador)
+        + run() : void
+        + obtenerTotalTareas() : int
+        + tareaTerminada() : void
+        + obtenerDatoCola() : DatosPelea
+        + agregarDatoCola(datosPelea : DatosPelea) : void
+        + agregarPeleaLista(datoPelea : DatosPelea) : void
+        + accionesFinalCiclo() : void
+        + getColaPeleas() : ConcurrentLinkedQueue<DatosPelea>
+        + drenarPeleasCompletadas() : ArrayList<DatosPelea>
+        + setActivo(activo : boolean) : void
+        + isActivo() : boolean
+        + setPausado(pausado : boolean) : void
+        + isPausado() : boolean
+    }
+
+    class DatosAtaque {
+        - poder : modelo.IPower
+        - mutanteOrigen : modelo.Mutante
+        - mutanteDestino : modelo.Mutante
+        + DatosAtaque(datoPelea : DatosPelea, numMutante : int)
+        + DatosAtaque(ataque : DatosAtaque)
+        + getPoder() : modelo.IPower
+        + getOrigen() : otros.Punto
+        + getDestino() : otros.Punto
+    }
+
+    class DatosJuego {
+        - listaMutantes : ArrayList<HiloMutante>
+        - listaPeleas : ArrayList<DatosPelea>
+        - simboloPorEquipo : String[]
+        - colorPorEquipo : Color[]
+        + DatosJuego(controlador : Controlador)
+        + getListaMutantes() : ArrayList<modelo.Mutante>
+        + getSimboloPorEquipo() : String[]
+        + getColorPorEquipo() : Color[]
+        + getListaHilosMutantes() : ArrayList<HiloMutante>
+        + getListaPeleas() : ArrayList<DatosPelea>
     }
 
     interface IObservable {
@@ -640,114 +763,48 @@ package controlador {
         + actualizar(datos : DatosJuego) : void
     }
 
-    class HiloMutante implements Runnable {
-        - controlador : Controlador
-        - estaVivo : boolean
-        - estado : EstadoMutante
-        - mutante : Mutante
-        - activo : boolean
-        + HiloMutante(mutante : Mutante)
-        + run() : void
-        + isEstaVivo() : boolean
-        + isEstado() : EstadoMutante
-        + elegirAtaque() : void
-        + regresarAEstadoBase() : void
-        + actualizar() : void
-        + recibirResultadoPelea(dañoRecibido : int, poderObtenido : int) : void
-    }
-
-    class DatosPelea {
-        - mutanteA : Mutante
-        - decisionA : EstadoMutante
-        - mutanteB : Mutante
-        - decisionB : EstadoMutante
-        - posA : Punto
-        - posB : Punto
-        + DatosPelea(hiloMutanteA : HiloMutante, hiloMutanteB : HiloMutante)
-        + getMutanteA() : Mutante
-        + getDecisionA() : EstadoMutante
-        + getMutanteB() : Mutante
-        + getDecisionB() : EstadoMutante
-        + getPosA() : Punto
-        + getPosB() : Punto
-    }
-
-    class DatosAtaque {
-        - poder : Poder
-        - origen : Punto
-        - destino : Punto
-        + Ataque(datoPelea : DatosPelea, cual : int)
-        + Ataque(ataque : Ataque)
-        + getPoder() : Poder
-        + getOrigen() : Punto
-        + getDestino() : Punto
-    }
-
-    class EjecutarPeleas implements Runnable {
-        - refenciaDeCola : ConcurrentLinkedQueue<int[]>
-        - ejecutor : EjecutorDePeleas
-        - activo : boolean
-        + EjecutarPeleas(ejecutor : EjecutorDePeleas)
-        + run() : void
-        + obtenerMutante(id : int, equipo : String) : HiloMutante
-        + isActivo() : boolean
-        + setActivo(activo : boolean) : void
-        + terminar() : void
-    }
-
-    class EjecutorDePeleas implements Runnable {
-        - controlador : Controlador
-        - executorService : ThreadPoolExecutor
-        - colaPeleas : ConcurrentLinkedQueue<int[]>
-        - listaPeleasCompletadas : CopyOnWriteArrayList<int[]>
-        - listaEjecutores : EjecutarPeleas[]
-        - activo : boolean
-        + EjecutorDePeleas(controlador : Controlador)
-        + run() : void
-        + obtenerDatoCola() : int[]
-        + agregarDatoCola(int[]) : void
-        + agregarPeleaALista(datoPelea : DatosPelea) : void
-        + reiniciarMutantes() : void
-        + getColaPeleas() : ConcurrentLinkedQueue<int[]>
-        + getListaEjecutores() : EjecutarPeleas[]
-        + isActivo() : boolean
-        + setActivo(activo : boolean) : void
-    }
-
-    class DatosJuego {
-        - listaMutantes : ArrayList<HiloMutante>
-        - simboloPorEquipo : String[]
-        - colorPorEquipo : Color[]
-        + DatosJuego(campoDeBatalla : CampoDeBatalla)
-        + getListaMutantes() : ArrayList<Mutante>
-        + getSimboloPorEquipo() : String[]
-        + getColorPorEquipo() : Color[]
-    }
-
     class Notificador implements Runnable {
         - controlador : Controlador
+        - activo : boolean
+        - pausado : boolean
         + Notificador(controlador : Controlador)
         + run() : void
+        + setActivo(valor : boolean) : void
+        + getActivo() : boolean
+        + setPausado(pausado : boolean) : void
+        + isPausado() : boolean
     }
 
     class Controlador implements IObservable {
-        - listaHilosMutantes : ArrayList<Mutante>
+        - listaHilosMutantes : ArrayList<HiloMutante>[]
         - listaObservadores : ArrayList<IObservador>
         - ejecutorDePeleas : EjecutorDePeleas
         - notificador : Notificador
         - executorService : ThreadPoolExecutor
-        - campoDeBatalla : CampoDeBatalla
+        - campoDeBatalla : juego.CampoDeBatalla
         - datosJuego : DatosJuego
+        - simulacionIniciada : boolean
+        - colorSeleccionado : Color[]
         + Controlador()
-        + iniciarJuego() : void
+        + iniciarSimulacion(cantidadPorEquipo : int) : void
+        + iniciarJuego(cantidad : int) : void
+        + resetEstadoMutantes() : void
+        + verificacionesFinCiclo() : void
+        + pausar() : void
+        + reanudar() : void
+        + reiniciar(cantidadPorEquipo : int) : void
+        + limpiarListas() : void
+        + detener() : void
         + obtenerDatosJuego() : void
         + agregaObservadores(observador : IObservador) : void
         + quitarObservadores(observador : IObservador) : void
         + notificar() : void
-        + getCampoDeBatalla() : CampoDeBatalla
+        + getColor() : Color[]
+        + isSimulacionIniciada() : boolean
+        + getCampoDeBatalla() : juego.CampoDeBatalla
         + getDatosJuego() : DatosJuego
         + getEjecutorDePeleas() : EjecutorDePeleas
-        + getListaHilosMutantes() : ArrayList<HiloMutante>
+        + getListaHilosMutantes(tipo : juego.TipoEquipo) : ArrayList<HiloMutante>
         + getListaObservadores() : ArrayList<IObservador>
         + getMedidasCampoBatalla() : int[]
     }
@@ -756,136 +813,204 @@ package controlador {
         + {static} main(args : String[]) : void
     }
 
-    HiloMutante "1" o-- "1" modelo.Mutante
-    HiloMutante --> EstadoMutante
-    HiloMutante --> Controlador : usa >
-    DatosPelea --> HiloMutante : construido con >
-    DatosPelea --> modelo.Mutante
-    DatosPelea --> EstadoMutante
-    DatosAtaque --> DatosPelea : construido con >
-    EjecutarPeleas --> EjecutorDePeleas : usa >
-    EjecutarPeleas --> HiloMutante : obtiene >
-    EjecutorDePeleas "1" *-- "*" EjecutarPeleas
-    EjecutorDePeleas --> Controlador : usa >
-    EjecutorDePeleas --> DatosPelea
+    HiloMutante "*" --> "1" Controlador
+    HiloMutante "1" *-- "1" modelo.Mutante
+    HiloMutante --> EstadoMutante : estado
+    DatosPelea "1" o-- "2" HiloMutante
+    DatosPelea --> EstadoMutante : decisionA / decisionB
+    EjecutarPeleas "*" --> "1" EjecutorDePeleas
+    EjecutarPeleas ..> DatosPelea : procesa >
+    EjecutorDePeleas "1" --> "1" Controlador
+    EjecutorDePeleas "1" o-- "*" EjecutarPeleas
+    EjecutorDePeleas "1" o-- "*" DatosPelea
+    DatosAtaque ..> DatosPelea
+    DatosAtaque --> modelo.IPower : poder
+    DatosAtaque --> modelo.Mutante : mutanteOrigen / mutanteDestino
     DatosJuego "1" o-- "*" HiloMutante
-    DatosJuego --> juego.CampoDeBatalla : construido con >
-    Notificador --> Controlador : usa >
+    DatosJuego "1" o-- "*" DatosPelea
+    DatosJuego --> Controlador : construido a partir de >
+    Notificador "1" --> "1" Controlador
     Controlador "1" *-- "1" EjecutorDePeleas
     Controlador "1" *-- "1" Notificador
     Controlador "1" *-- "1" juego.CampoDeBatalla
-    Controlador "1" *-- "1" DatosJuego
+    Controlador "1" *-- "0..1" DatosJuego
     Controlador "1" o-- "*" HiloMutante
     Controlador "1" o-- "*" IObservador
+    Notificador ..|> Runnable
     Controlador ..|> IObservable
-
 }
 
+' ============================================================
+' PAQUETE ui
+' ============================================================
 package ui {
-
-    class ObservadorUi implements controlador.IObservador {
-        - ventanaPrincipal : VentanaPrincipal
-        - datos : DatosJuego
-        + ObservadorUi(ventana : VentanaPrincipal)
-        + actualizar(datos : DatosJuego) : void
-        + getVentanaPrincipal() : VentanaPrincipal
-        + getDatos() : DatosJuego
-    }
 
     class VentanaPrincipal {
         - botonIniciar : JButton
         - botonPausar : JButton
         - botonReiniciar : JButton
         - pantallaJuego : PantallaJuego
+        - controlador : controlador.Controlador
+        - observador : ObservadorUi
+        - spinnerCantidad : JSpinner
+        - etiquetaScore : JLabel
+        - pausado : boolean
         + VentanaPrincipal()
-        + actualizar(datos : DatosJuego) : void
         + inicializarComponentes() : void
+        - alPresionarIniciar(evento : ActionEvent) : void
+        - alPresionarPausar(evento : ActionEvent) : void
+        - alPresionarReiniciar(evento : ActionEvent) : void
+        + actualizar(datos : controlador.DatosJuego) : void
         + getBotonIniciar() : JButton
         + getBotonPausar() : JButton
         + getBotonReiniciar() : JButton
         + getPantallaJuego() : PantallaJuego
     }
-    class JFrame <<Java Swing>>
     VentanaPrincipal --|> JFrame
 
     class PantallaJuego {
         - mutantesDibujados : ArrayList<MutantesDibujados>
         - principal : VentanaPrincipal
-        - ataquesActivos : ArrayList<AnimaciónAtaque>
+        - ataquesActivos : ArrayList<AnimacionAtaque>
         - infoVisible : boolean
         + PantallaJuego(principal : VentanaPrincipal)
-        + actualizar(datos : DatosJuego) : void
+        + actualizar(datos : controlador.DatosJuego) : void
+        - sincronizarMutantes(mutantes : ArrayList<modelo.Mutante>) : void
+        - claveMutante(mutante : modelo.Mutante) : int
+        - agregarNuevasAnimaciones(peleas : ArrayList<controlador.DatosPelea>) : void
+        # paintComponent(g : Graphics) : void
+        + agregarAnimacionAtaque(ataque : controlador.DatosAtaque) : void
         + getMutantesDibujados() : ArrayList<MutantesDibujados>
         + getPrincipal() : VentanaPrincipal
-        + getAtaquesActivos() : ArrayList<AnimaciónAtaque>
+        + getAtaquesActivos() : ArrayList<AnimacionAtaque>
         + isInfoVisible() : boolean
         + setInfoVisible(infoVisible : boolean) : void
-        + agregarAnimacionAtaque(ataque : Ataque) : void
-        + paintComponent(g : Graphics) : void
     }
-    class JPanel <<Java Swing>>
     PantallaJuego --|> JPanel
 
     class MutantesDibujados {
-        - mutante : Mutante
-        - jLabel : JLabel
-        - imagen : ImageIcon
-        + MutantesDibujados(mutante : Mutante)
-        + dibujar() : void
-        + obtenerPosicion() : Punto
+        - mutante : modelo.Mutante
+        + MutantesDibujados(mutante : modelo.Mutante)
+        + dibujar(g : Graphics2D) : void
+        - dibujarBarraVida(g : Graphics2D, x : int, y : int, diametro : int) : void
+        + obtenerPosicion() : otros.Punto
         + toString() : String
-        + getMutante() : Mutante
-        + getJLabel() : JLabel
-        + getImagen() : ImageIcon
+        + getMutante() : modelo.Mutante
     }
 
-    class AnimaciónAtaque {
+    class AnimacionAtaque {
         - pantalla : PantallaJuego
-        - jLabel : JLabel
-        - dibujos : ArrayList<ImageIcon>
-        + AnimaciónAtaque(ataque : Ataque)
-        + dibujar() : void
+        - frameActual : int
+        + AnimacionAtaque(pantalla : PantallaJuego, ataque : controlador.DatosAtaque)
+        + dibujar(g : Graphics2D) : void
+        - colorPorPoder() : Color
         + isTerminada() : boolean
         + getPantalla() : PantallaJuego
-        + getJLabel() : JLabel
-        + getDibujos() : ArrayList<ImageIcon>
         + getFrameActual() : int
         + setFrameActual(frameActual : int) : void
     }
-    AnimaciónAtaque --|> controlador.DatosAtaque
+    AnimacionAtaque --|> controlador.DatosAtaque
 
-    ObservadorUi "1" o-- "1" VentanaPrincipal
-    ObservadorUi --> controlador.DatosJuego
+    class ObservadorUi implements controlador.IObservador {
+        - ventanaPrincipal : VentanaPrincipal
+        - datos : controlador.DatosJuego
+        + ObservadorUi(ventana : VentanaPrincipal)
+        + actualizar(datos : controlador.DatosJuego) : void
+        + getVentanaPrincipal() : VentanaPrincipal
+        + getDatos() : controlador.DatosJuego
+    }
+
+    class PruebaUi {
+        + {static} main(args : String[]) : void
+    }
+
     VentanaPrincipal "1" *-- "1" PantallaJuego
-    VentanaPrincipal --> controlador.DatosJuego
+    VentanaPrincipal "1" *-- "1" controlador.Controlador
+    VentanaPrincipal "1" *-- "1" ObservadorUi
     PantallaJuego "1" o-- "*" MutantesDibujados
-    PantallaJuego "1" o-- "*" AnimaciónAtaque
-    PantallaJuego --> controlador.DatosJuego
-    MutantesDibujados --> modelo.Mutante
-
+    PantallaJuego "1" o-- "*" AnimacionAtaque
+    PantallaJuego "1" --> "1" VentanaPrincipal
+    MutantesDibujados "1" --> "1" modelo.Mutante
+    AnimacionAtaque "1" --> "1" PantallaJuego
+    ObservadorUi "1" --> "1" VentanaPrincipal
 }
 
+' ============================================================
+' PAQUETE otros
+' ============================================================
 package otros {
 
     class Constantes <<final>> {
-        + {static} TIEMPO_ESPERA : final int
-        + {static} SIZE_X : final int
-        + {static} SIZE_Y : final int
-        + {static} ATAQUE_MAXIMO : final int
-        + {static} TASA_REFRESCO : final int
-        + {static} VELOCIDAD : final int
-        + {static} TAMAÑO_MAXIMO : final int
-        + {static} MAXIMO_DEFENSA : final int
-        + {static} MAXIMO_ATAQUE : final int
-        + {static} MAXIMO_POR_DEFECTO_ATAQUE : final int
-        + {static} MAXIMO_VIDA : final int
-        + {static} RADIO_MAXIMO : final double
-        + {static} DISTANCIA_MAXIMA_RECORRIDO : final int
-        + {static} RUTA_IMAGENES_MUTANTES : final String[]
-        + {static} RUTA_IMAGENES_ATAQUES : final String
-        + {static} NUMERO_FRAMES_ATAQUE : final int
-        + {static} DELAY_ANIMACION_ATAQUE : final int
-        + {static} TASA_REFRESCO_OBSERVABLE : final int
+        + {static} TIEMPO_ESPERA : int
+        + {static} SIZE_X : int
+        + {static} SIZE_Y : int
+        + {static} CANTIDAD_THREADS : int
+        + {static} PADDING_PANTALLA : int
+        + {static} RESIZABLE : boolean
+        + {static} ATAQUE_MINIMO : int
+        + {static} ATAQUE_MAXIMO_POR_DEFECTO : int
+        + {static} ATAQUE_MAXIMO : int
+        + {static} CANTIDAD_ESTADOS_MUTANTE : int
+        + {static} CANTIDAD_DE_DECISIONES_MUTANTE : int
+        + {static} DIMENSIONES_PANTALLA : int[]
+        + {static} VELOCIDAD : int
+        + {static} TAMAÑO_MINIMO : int
+        + {static} TAMAÑO_MAXIMO : int
+        + {static} NOMBRES_PODERES : String[]
+        + {static} COLORES_PODERES : Color[]
+        + {static} DEFENSA_MINIMO : int
+        + {static} DEFENSA_MAXIMO : int
+        + {static} MAXIMO_VIDA : int
+        + {static} CANTIDAD_EQUIPOS : int
+        + {static} CANTIDAD_MUTANTES_POR_DEFECTO : int
+        + {static} CANTIDAD_MUTANTES_MAXIMO : int
+        + {static} CANTIDAD_MUTANTES_MINIMO : int
+        + {static} POSICION_ARREGLO : int[]
+        + {static} SIMBOLOS : String[]
+        + {static} RADIO_MAXIMO : double
+        + {static} DISTANCIA_MAXIMA_RECORRIDO : int
+        + {static} RUTA_IMAGENES_MUTANTES : String[]
+        + {static} RUTA_IMAGENES_ATAQUES : String[]
+        + {static} COLORES : Color[][]
+        + {static} BACKGROUND : Color
+        + {static} TASA_REFRESCO_DATOS : int
+        + {static} TASA_REFRESCO_PANTALLA : int
+        + {static} DELAY_DE_THREADS : int
+        + {static} MUTANTES_MUERTOS_INICIAL : int
+        + {static} TAMANO_ANIMACION : int
+        + {static} NUMERO_FRAMES_ATAQUE : int
+        + {static} DIAMETRO_MUTANTE : int
+        + {static} COLOR_MUTANTE_SIN_EQUIPO : Color
+        + {static} COLOR_BORDE_MUTANTE : Color
+        + {static} COLOR_SIMBOLO_MUTANTE : Color
+        + {static} COLOR_NOMBRE_MUTANTE : Color
+        + {static} COLOR_BARRA_VIDA_FONDO : Color
+        + {static} COLOR_BARRA_VIDA_ALTA : Color
+        + {static} COLOR_BARRA_VIDA_BAJA : Color
+        + {static} FUENTE_SIMBOLO : Font
+        + {static} FUENTE_NOMBRE : Font
+        + {static} FUENTE_INFORMACION : Font
+        + {static} POSICION_X_INFO : int
+        + {static} POSICION_Y_INFO : int
+        + {static} SEPARACION_BARRA_VIDA : int
+        + {static} ALTURA_BARRA_VIDA : int
+        + {static} PORCENTAJE_VIDA_BAJA : double
+        + {static} AJUSTE_X_NOMBRE : int
+        + {static} SEPARACION_Y_NOMBRE : int
+        + {static} TITULO_VENTANA : String
+        + {static} TEXTO_INICIAR : String
+        + {static} TEXTO_PAUSAR : String
+        + {static} TEXTO_REANUDAR : String
+        + {static} TEXTO_REINICIAR : String
+        + {static} TEXTO_MUTANTES_POR_EQUIPO : String
+        + {static} TEXTO_INSTRUCCIONES : String
+        + {static} SEPARADOR_SCORE : String
+        + {static} TEXTO_PARTIDA_TERMINADA : String
+        + {static} BORDE_SCORE_ARRIBA : int
+        + {static} BORDE_SCORE_IZQUIERDA : int
+        + {static} BORDE_SCORE_ABAJO : int
+        + {static} BORDE_SCORE_DERECHA : int
+        + {static} INCREMENTO_CANTIDAD_MUTANTES : int
     }
 
     class Punto {
@@ -898,28 +1023,22 @@ package otros {
         + getY() : int
     }
 
-    class Matematicas {
+    class Matematicas <<final>> {
         + {static} calcularRadio(a : Punto, b : Punto) : double
+        + {static} doubleAleatorio(minimo : double, maximo : double) : double
+        + {static} intAleatorio(minimo : int, maximo : int) : int
     }
-
-    class PruebaUI {
-        + {static} main(args : String[]) : void
-    }
-
-    Matematicas ..> Punto : usa
-
 }
 
+' ============================================================
+' PAQUETE main
+' ============================================================
 package main {
     class main {
         + {static} main(args : String[]) : void
     }
-    main --> controlador.Controlador : crea >
-    main --> ui.VentanaPrincipal : crea >
+    main ..> ui.VentanaPrincipal : crea >
 }
-
-modelo.Mutante "1" o-- "1" otros.Punto : posicion >
-modelo.Mutante "1" o-- "1" juego.Equipo : equipo >
 
 @enduml
 ```
