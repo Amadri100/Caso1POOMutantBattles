@@ -71,6 +71,10 @@ public class Controlador implements IObservable {
     }
 
     
+    public void verificacionesFinCiclo() {
+        this.campoDeBatalla.actualizarScoreBoard();
+    }
+
     public void pausar() {
         this.ejecutorDePeleas.setPausado(true);
         this.notificador.setPausado(true);
@@ -141,7 +145,6 @@ public class Controlador implements IObservable {
     public boolean isSimulacionIniciada() {
         return this.simulacionIniciada;
     }
-
 
     public CampoDeBatalla getCampoDeBatalla() {
         return this.campoDeBatalla;

@@ -65,7 +65,7 @@ public class EjecutorDePeleas implements Runnable {
                     if (this.colaPeleas.isEmpty() && this.tareasPendientes.get() <= 0) {
                         this.tareasPendientes.set(0);
                         this.procesados = !procesados;
-                        this.reiniciarMutantes();
+                        this.accionesFinalCiclo();
                     }
                 }
             }
@@ -103,7 +103,8 @@ public class EjecutorDePeleas implements Runnable {
         listaPeleasCompletadas.add(datoPelea);
     }
 
-    public void reiniciarMutantes() {
+    public void accionesFinalCiclo() {
+        this.controlador.verificacionesFinCiclo();
         this.controlador.resetEstadoMutantes();
     }
 

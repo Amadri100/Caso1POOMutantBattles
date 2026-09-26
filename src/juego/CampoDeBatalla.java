@@ -51,6 +51,11 @@ public class CampoDeBatalla {
         return valor;
     }
 
+    public void actualizarScoreBoard() {
+        this.scoreBoard.actualizar(this);
+    }
+
+
     public ScoreBoard getScoreBoard() {
         return this.scoreBoard;
     }
