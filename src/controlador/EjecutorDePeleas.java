@@ -62,8 +62,8 @@ public class EjecutorDePeleas implements Runnable {
                     this.procesados = !procesados;
                 }
                 else {
-                    if (this.tareasPendientes.get() <= 0) {
-                        this.tareasPendientes.set(0);;
+                    if (this.colaPeleas.isEmpty() && this.tareasPendientes.get() <= 0) {
+                        this.tareasPendientes.set(0);
                         this.procesados = !procesados;
                         this.reiniciarMutantes();
                     }

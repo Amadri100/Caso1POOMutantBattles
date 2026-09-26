@@ -73,7 +73,10 @@ public class EjecutarPeleas implements Runnable {
         else 
             valido = false;
         if (!valido) {
-            this.ejecutor.agregarDatoCola(datoPelea); //Se vuelve a insertar en la cola
+            // La pelea todavía no está lista para procesarse. No se reencola para
+            // evitar que quede en la cola indefinidamente y bloquee la simulación.
+            this.ejecutor.tareaTerminada();
+            return;
         }
     }
 
