@@ -26,6 +26,11 @@ public final class Constantes {
     public static final int TAMAÑO_MINIMO = 3; //Defecto = 3
     public static final int TAMAÑO_MAXIMO = 11; //Defecto = 11
 
+    //Ambos deben estar alineados con sus indice, al final de colores_poderes tiene que haber un color por defecto
+    public static final String[] NOMBRES_PODERES = {"PoderAgua", "PoderFuego",  "PoderRayo", "PoderTelaraña", "PoderTierra"};
+    public static final Color[] COLORES_PODERES = {Color.CYAN, Color.ORANGE, Color.YELLOW, Color.LIGHT_GRAY, new Color(139, 69, 19), Color.white};
+    
+ 
     public static final int DEFENSA_MINIMO = 1; //Defecto = 1
     public static final int DEFENSA_MAXIMO = 3; //Defecto = 3
 

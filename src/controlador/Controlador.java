@@ -35,9 +35,10 @@ public class Controlador implements IObservable {
         this.ejecutorDePeleas = new EjecutorDePeleas(this);
         this.notificador = new Notificador(this);
         this.executorService = (ThreadPoolExecutor) Executors.newCachedThreadPool();
-        this.colorSeleccionado = Constantes.COLORES[Matematicas.intAleatorio(0, Constantes.COLORES.length-1)];
+        
     }
     public void iniciarSimulacion(int cantidadPorEquipo) {
+        this.colorSeleccionado = Constantes.COLORES[Matematicas.intAleatorio(0, Constantes.COLORES.length-1)];
         this.iniciarJuego(cantidadPorEquipo);
         for (TipoEquipo tipo : TipoEquipo.values()) {
             for (HiloMutante hilo : this.getListaHilosMutantes(tipo)) {
@@ -81,6 +82,7 @@ public class Controlador implements IObservable {
     }
 
     public void reiniciar(int cantidadPorEquipo) {
+        
         this.limpiarListas();   
         this.ejecutorDePeleas = new EjecutorDePeleas(this);
         this.notificador = new Notificador(this);
@@ -90,6 +92,8 @@ public class Controlador implements IObservable {
 
     public void limpiarListas() {
         this.detener();
+        this.ejecutorDePeleas.setPausado(false);
+        this.notificador.setPausado(false);
         for (TipoEquipo tipo : TipoEquipo.values()) {
             this.listaHilosMutantes[tipo.getIndice()].clear();
         }

@@ -1,6 +1,7 @@
 package modelo;
 
- 
+import otros.Constantes;
+
 public class PoderTelaraña implements IPower {
 
     public PoderTelaraña() {
@@ -14,7 +15,7 @@ public class PoderTelaraña implements IPower {
 
     @Override
     public String nombrePoder() {
-        return "PoderTelaraña";
+        return Constantes.NOMBRES_PODERES[3];
     }
     
 }

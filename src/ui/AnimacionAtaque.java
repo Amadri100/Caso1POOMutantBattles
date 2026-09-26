@@ -51,20 +51,12 @@ public class AnimacionAtaque extends DatosAtaque {
         if (getPoder() == null) {
             return Color.WHITE;
         }
-        switch (getPoder().nombrePoder()) {
-            case "PoderFuego":
-                return Color.ORANGE;
-            case "PoderAgua":
-                return Color.CYAN;
-            case "PoderRayo":
-                return Color.YELLOW;
-            case "PoderTierra":
-                return new Color(139, 69, 19);
-            case "PoderTelaraña":
-                return Color.LIGHT_GRAY;
-            default:
-                return Color.WHITE;
+        for (int i = 0; i<Constantes.NOMBRES_PODERES.length-1;i++) {
+            if (getPoder().nombrePoder() == Constantes.NOMBRES_PODERES[i]) {
+                return Constantes.COLORES_PODERES[i];
+            }
         }
+        return Constantes.COLORES_PODERES[Constantes.NOMBRES_PODERES.length-1];
     }
 
     public boolean isTerminada() {
