@@ -35,7 +35,7 @@ public class Controlador implements IObservable {
         this.ejecutorDePeleas = new EjecutorDePeleas(this);
         this.notificador = new Notificador(this);
         this.executorService = (ThreadPoolExecutor) Executors.newCachedThreadPool();
-        this.colorSeleccionado = Constantes.COLORES[Matematicas.intAleatorio(0, Constantes.COLORES.length)];
+        this.colorSeleccionado = Constantes.COLORES[Matematicas.intAleatorio(0, Constantes.COLORES.length-1)];
     }
     public void iniciarSimulacion(int cantidadPorEquipo) {
         this.iniciarJuego(cantidadPorEquipo);
