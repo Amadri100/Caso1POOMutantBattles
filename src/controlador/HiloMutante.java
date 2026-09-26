@@ -9,9 +9,11 @@ public class HiloMutante implements Runnable {
     private boolean estaVivo;
     private EstadoMutante estado;
     private boolean activo;
+    private Controlador controlador;
 
-    public HiloMutante(Mutante mutante) {
+    public HiloMutante(Mutante mutante, Controlador controlador) {
         this.mutante = mutante;
+        this.controlador = controlador;
         this.activo = true;
         this.estado = EstadoMutante.MOVIENDOSE;
         this.estaVivo = mutante != null && mutante.estaVivo();
@@ -39,60 +41,99 @@ public class HiloMutante implements Runnable {
     }
 
     public void moverse() {
-    if (this.mutante != null && this.estado == EstadoMutante.MOVIENDOSE) {
-        Punto posicionActual = this.mutante.getPosicion();
-        
-        if (posicionActual != null) {
-            int velocidad = Constantes.VELOCIDAD;
-            // se usa la clase Matematicas para generar un desplazamiento aleatorio de -1, 0 o 1
-            int tipoMovimiento = Matematicas.intAleatorio(0, 2);
-            
-            int desplazamientoX = 0;
-            int desplazamientoY = 0;
 
-            switch (tipoMovimiento) {
-                case 0: // movimiento al centro
-                    desplazamientoX = Matematicas.intAleatorio(-1, 1) * velocidad;
-                    desplazamientoY = Matematicas.intAleatorio(-1, 1) * velocidad;
-                    break;
-                        
-                case 1: // diagonales
-                    desplazamientoX = (Matematicas.intAleatorio(0, 1) == 0 ? 1 : -1) * velocidad;
-                    desplazamientoY = (Matematicas.intAleatorio(0, 1) == 0 ? 1 : -1) * velocidad;
-                    break;
-                        
-                case 2: // paso hacia atrás
-                    desplazamientoX = Matematicas.intAleatorio(-1, 1) * -velocidad;
-                    desplazamientoY = Matematicas.intAleatorio(-1, 1) * -velocidad;
-                    break;
+        if (this.mutante != null && this.estado == EstadoMutante.MOVIENDOSE) {
+
+            Punto posicionActual = this.mutante.getPosicion();
+
+            if (posicionActual != null) {
+
+                int velocidad = Constantes.VELOCIDAD;
+                Punto centro = this.controlador.getCampoDeBatalla().getPuntoMedio();
+
+                // Dirección hacia el centro
+                int direccionX = Integer.compare(
+                        centro.getX(),
+                        posicionActual.getX()
+                );
+
+                int direccionY = Integer.compare(
+                        centro.getY(),
+                        posicionActual.getY()
+                );
+
+                /*
+                * Elegimos una variación alrededor de la dirección
+                * principal.
+                *
+                * 0-5  -> movimiento hacia el centro
+                * 6-7  -> movimiento exactamente hacia atrás
+                */
+                int tipoMovimiento = Matematicas.intAleatorio(0, 7);
+
+                int movimientoX = direccionX;
+                int movimientoY = direccionY;
+
+                switch (tipoMovimiento) {
+
+                    case 0:
+                    case 1:
+                    case 2:
+                        // Directamente hacia el centro
+                        break;
+
+                    case 3:
+                        // Variación horizontal
+                        movimientoX = direccionX;
+                        movimientoY = 0;
+                        break;
+
+                    case 4:
+                        // Variación vertical
+                        movimientoX = 0;
+                        movimientoY = direccionY;
+                        break;
+
+                    case 5:
+                        // Otra variación aleatoria
+                        movimientoX = direccionX;
+                        movimientoY = direccionY;
+                        break;
+
+                    case 6:
+                    case 7:
+                        // EXACTAMENTE en dirección contraria al centro
+                        movimientoX = -direccionX;
+                        movimientoY = -direccionY;
+                        break;
+                }
+
+                int nuevoX = posicionActual.getX()
+                        + movimientoX * velocidad;
+
+                int nuevoY = posicionActual.getY()
+                        + movimientoY * velocidad;
+
+                // Límites del campo
+                int maxX = Constantes.SIZE_X;
+                int maxY = Constantes.SIZE_Y;
+
+                if (nuevoX < 0) {
+                    nuevoX = 0;
+                } else if (nuevoX > maxX) {
+                    nuevoX = maxX;
+                }
+
+                if (nuevoY < 0) {
+                    nuevoY = 0;
+                } else if (nuevoY > maxY) {
+                    nuevoY = maxY;
+                }
+
+                posicionActual.setX(nuevoX);
+                posicionActual.setY(nuevoY);
             }
-        
-            
-            // se calcula la nueva posición
-            int nuevoX = posicionActual.getX() + desplazamientoX;
-            int nuevoY = posicionActual.getY() + desplazamientoY;
-            
-            // validación de límite de campo
-            int maxX = Constantes.SIZE_X;
-            int maxY = Constantes.SIZE_Y;
-            
-            if (nuevoX < 0) {
-                nuevoX = 0;
-            } else if (nuevoX > maxX) {
-                nuevoX = maxX;
-            }
-            
-            if (nuevoY < 0) {
-                nuevoY = 0;
-            } else if (nuevoY > maxY) {
-                nuevoY = maxY;
-            }
-            
-            // se actualiza la posición del mutante
-            posicionActual.setX(nuevoX);
-            posicionActual.setY(nuevoY);
         }
-    }
     }
     public void elegirAtaque() {
         if (this.estado == EstadoMutante.MOVIENDOSE) {
