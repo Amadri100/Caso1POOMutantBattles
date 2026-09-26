@@ -16,6 +16,7 @@ public class Notificador implements Runnable{
         while(activo) {
             if (!pausado) {
                 controlador.notificar();
+                System.out.println("Se notifico");
             }
             
             try {

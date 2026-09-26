@@ -112,7 +112,7 @@ public class PantallaJuego extends JPanel {
         if (this.infoVisible) {
             g2.setFont(Constantes.FUENTE_INFORMACION);
             g2.setColor(Color.DARK_GRAY);
-            g2.drawString(Constantes.TEXTO_INSTRUCCIONES, Constantes.POSICION_X_INFO, Constantes.POSICION_Y_INFO);
+            //g2.drawString(Constantes.TEXTO_INSTRUCCIONES, Constantes.POSICION_X_INFO, Constantes.POSICION_Y_INFO); Ya se pinta
         }
     }
 
