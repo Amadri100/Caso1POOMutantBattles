@@ -25,6 +25,7 @@ public class HiloMutante implements Runnable {
         while (this.mutante.estaVivo() && this.activo) {
             
             moverse();
+            elegirAtaque();
             actualizar();
 
 
