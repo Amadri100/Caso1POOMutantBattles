@@ -1,14 +1,12 @@
 package controlador;
 
-import juego.CampoDeBatalla;
 import juego.TipoEquipo;
 import modelo.Mutante;
 import otros.Constantes;
 
 import java.awt.Color;
-import java.io.Console;
+
 import java.util.ArrayList;
-import java.awt.Color; // Este import es necesario para usar la clase Color
 
 public class DatosJuego {
     private ArrayList<HiloMutante> listaMutantes;

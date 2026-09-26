@@ -1,7 +1,6 @@
 package controlador;
 
-import controlador.HiloMutante;
-import modelo.Mutante;
+
 import otros.Punto;
 
 public class DatosPelea {

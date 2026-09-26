@@ -40,6 +40,7 @@ src/
 
 ## modelo
 ### Mutante
+### Mutante
 - id : int
 - nombre : String
 - equipo : Equipo
@@ -55,11 +56,16 @@ src/
 + getPoder() : IPower
 + moverse(posicion : Punto) : void
 + getPosicion() : Punto
++ getVida() : int
 + atacar() : int
-+ recibirDaño(daño : int) : int
++ estadoDespuesAtaque(dañoCausado : int) : void
++ recibirDaño(daño : int, defiende : boolean) : int[]
 + estaVivo() : boolean
 
 // id empieza en 0
+// recibirDaño ahora recibe si el mutante defiende (mitiga daño con su defensa) y retorna [vidaRestante, dañoReal]
+// estadoDespuesAtaque incrementa el ataque del mutante (hasta ATAQUE_MAXIMO) cuando causó daño
+
 ### IPower (Interfaz)
 + usarPoder() : void
 + nombrePoder() : String
@@ -95,7 +101,8 @@ src/
 ### TipoEquipo (enum)
 + EQUIPO_A
 + EQUIPO_B
-+ obtenerIndice() : int
++ getIndice() : int
++ getSimbolo() : String
 
 ### Equipo
 - listaMutantes : ArrayList\<Mutante>
@@ -104,18 +111,16 @@ src/
 - color : Color
 - cantidadMutantesVivos : int
 - cantidadMutantesMuertos : int 
-+ Equipo (equipo : TipoEquipo, cantidad : int)
++ Equipo(equipo : TipoEquipo, cantidad : int)
 + setColor(color : Color) : void
 + setSimbolo(simbolo : String) : void
 + getColor() : Color
 + getSimbolo() : String
 + getListaMutantes() : ArrayList\<Mutante>
 + getTipoEquipo() : TipoEquipo
-+ getCantidadMutantesVivos(dato : TipoEquipo) : int
-+ getCantidadMutantesMuertos(dato : TipoEquipo) : int
++ getCantidadMutantesVivos() : int
++ getCantidadMutantesMuertos() : int
 + registrarMuerte(dato : TipoEquipo) : void
-
-//cantidadMutantesVivos [0] -> Equipo A [1] -> Equipo B
 
 ### CampoDeBatalla
 - sizeX : int
@@ -131,6 +136,7 @@ src/
 + getEquipoB() : Equipo
 + getCantidadMutantesVivos() : int[]
 + getCantidadMutantesMuertos() : int[]
++ actualizarScoreBoard() : void
 + getScoreBoard() : ScoreBoard
 + getSizeX() : int
 + getSizeY() : int
@@ -140,87 +146,25 @@ src/
 - mutantesMuertos : int 
 - mutantesEquipoA : int
 - mutantesEquipoB : int
-+ ScoreBoard(campo : CampoBatalla)
-+ actualizar(campo : CampoBatalla) : void
++ ScoreBoard(campo : CampoDeBatalla)
++ actualizar(campo : CampoDeBatalla) : void
 + toString() : String
 + getMutantesVivos() : int
 + getMutantesMuertos() : int
 + getMutantesEquipoA() : int
 + getMutantesEquipoB() : int
 
+
 ### PruebaJuego
-+ main(args : String[]) : static void : static void
++ main(args : String[]) : static void
 
 ## controlador
-
-### EjecutarPeleas (implementa Runnable)
-- referenciaCola : ConcurrentLinkedQueue\<int[]>
-- ejecutor : EjecutorDePeleas
-- activo : boolean
-+ EjecutarPeleas(ejecutor : EjecutorDePeleas)
-+ run() : void
-+ obtenerMutante(id : int, equipo : TipoEquipo) : HiloMutante
-+ isActivo() : boolean
-+ setActivo(activo : boolean) : void
-+ terminar() : void
-
-//EjecutarPeleas, ejecuta una pelea, revisa si ya se movio el contrincante, si ambos estan listo se ejecuta el proceso y se elimina la "llave" de la cola, de lo contrario se inserta al final para ser revisado despues.
-
-
-### DatosPelea
-- mutanteA : Mutante
-- decisionA : EstadoMutante
-- mutanteB : Mutante
-- decisionB : EstadoMutante
-- posA : Punto
-- posB : Punto
-+ DatosPelea(hiloMutanteA : HiloMutante, hiloMutanteB : HiloMutante)
-+ getMutanteA() : Mutante 
-+ getDecisionA() : EstadoMutante
-+ getMutanteB() : Mutante 
-+ getDecisionB() : EstadoMutante
-+ getPosA() : Punto 
-+ getPosB() : Punto 
-
-### EjecutorDePeleas (implementa Runnable)
-- controlador : Controlador
-- executorService : ThreadPoolExecutor
-- colaPeleas : ConcurrentLinkedQueue\<int[]>
-- listaPeleasCompletadas : CopyOnWriteArrayList\<DatosPelea>
-- listaEjecutores : ArrayList\<EjecutarPeleas>
-- activo : boolean
-+ EjecutorDePeleas(controlador : Controlador)
-+ run() : void
-+ obtenerDatoCola() : int[]
-+ agregarDatoCola(int[]) : void 
-+ agregarPeleaALista(datoPelea : DatosPelea) : void 
-+ reiniciarMutantes() : void 
-+ getColaPeleas() : ConcurrentLinkedQueue\<int[]>
-+ getListaEjecutores() : EjecutarPeleas[]
-+ isActivo() : boolean
-+ setActivo(activo : boolean) : void
-
-//Utiliza una cola y una "pool" de threads para procesar todas las peleas entre los mutantes
-
-//reiniciarMutantes() -> Hace que los mutantes vuelvan a estar listos para moverse
-
-// Todos los potenciales oponentes de un mutante son los que estan a radioMaximo + distanciaMaximaDeRecorrido
-
-
-### DatosAtaque
-- poder : Poder
-- mutanteOrigen : Mutante
-- mutanteDestino : Mutante
-+ DatosAtaque(datoPelea : DatosPelea, cual : int)
-+ DatosAtaque(ataque : DatosAtaque)
-+ getPoder() : Poder 
-+ getOrigen() : Punto
-+ getDestino() : Punto 
 
 ### EstadoMutante (enum)
 + MOVIENDOSE
 + ATAQUE
 + DEFENSA
++ getEstadoAleatorio() : static EstadoMutante
 
 ### HiloMutante (implementa Runnable)
 - controlador : Controlador
@@ -228,173 +172,311 @@ src/
 - estado : EstadoMutante
 - mutante : Mutante
 - activo : boolean
-+ HiloMutante(mutante : Mutante)
++ HiloMutante(mutante : Mutante, controlador : Controlador)
 + run() : void
-+ isEstaVivo() : boolean
-+ isEstado() : EstadoMutante
++ moverse() : void
 + elegirAtaque() : void
-+ regresarAEstadoBase() : void
-+ actualizar() : void 
-+ recibirResultadoPelea(dañoRecibido: int, poderObtenido : int) : void 
-//Maneja el movimiento y decision del mutante
-// recibirResultadoPelea() es un metodo Synchronized 
-// decide 
++ volverAEstadoBase() : void
++ actualizar() : void
++ getMutante() : Mutante
++ getEstado() : EstadoMutante
++ isEstaVivo() : boolean
++ isActivo() : boolean
++ setActivo(activo : boolean) : void
+
+### DatosPelea
+- mutanteA : HiloMutante
+- decisionA : EstadoMutante
+- mutanteB : HiloMutante
+- decisionB : EstadoMutante
+- posA : Punto
+- posB : Punto
++ DatosPelea(hiloMutanteA : HiloMutante, hiloMutanteB : HiloMutante)
++ guardarDatos() : void
++ getMutanteA() : HiloMutante
++ getDecisionA() : EstadoMutante
++ getMutanteB() : HiloMutante
++ getDecisionB() : EstadoMutante
++ getPosA() : Punto
++ getPosB() : Punto
+
+### EjecutarPeleas (implementa Runnable)
+- ejecutor : EjecutorDePeleas
+- activo : boolean
++ EjecutarPeleas(ejecutor : EjecutorDePeleas)
++ run() : void
++ isActivo() : boolean
++ iniciar() : void
++ terminar() : void
+
+### EjecutorDePeleas (implementa Runnable)
+- controlador : Controlador
+- executorService : ThreadPoolExecutor
+- colaPeleas : ConcurrentLinkedQueue\<DatosPelea>
+- listaPeleasCompletadas : CopyOnWriteArrayList\<DatosPelea>
+- listaEjecutores : ArrayList\<EjecutarPeleas>
+- procesados : boolean
+- activo : boolean
+- pausado : volatile boolean
+- tareasPendientes : AtomicInteger
++ EjecutorDePeleas(controlador : Controlador)
++ run() : void
++ obtenerTotalTareas() : int
++ tareaTerminada() : void
++ obtenerDatoCola() : DatosPelea
++ agregarDatoCola(datosPelea : DatosPelea) : void
++ agregarPeleaLista(datoPelea : DatosPelea) : void
++ accionesFinalCiclo() : void
++ getColaPeleas() : ConcurrentLinkedQueue\<DatosPelea>
++ drenarPeleasCompletadas() : ArrayList\<DatosPelea>
++ setActivo(activo : boolean) : synchronized void
++ isActivo() : boolean
++ setPausado(pausado : boolean) : void
++ isPausado() : boolean
+
+
+### DatosAtaque
+- poder : IPower
+- mutanteOrigen : Mutante
+- mutanteDestino : Mutante
++ DatosAtaque(datoPelea : DatosPelea, numMutante : int)
++ DatosAtaque(ataque : DatosAtaque)
++ getPoder() : IPower
++ getOrigen() : Punto
++ getDestino() : Punto
 
 ### DatosJuego
 - listaMutantes : ArrayList\<HiloMutante>
 - listaPeleas : ArrayList\<DatosPelea>
 - simboloPorEquipo : String[]
 - colorPorEquipo : Color[]
-+ DatosJuego(campoDeBatalla : CampoDeBatalla)  
++ DatosJuego(controlador : Controlador)
 + getListaMutantes() : ArrayList\<Mutante>
-+ getSimboloPorEquipo : String[]
-+ getColorPorEquipo : Color[]
++ getSimboloPorEquipo() : String[]
++ getColorPorEquipo() : Color[]
++ getListaHilosMutantes() : ArrayList\<HiloMutante>
++ getListaPeleas() : ArrayList\<DatosPelea>
 
-### IObservable (Intefaz)
+### IObservable (Interfaz)
 + agregaObservadores(observador : IObservador) : void
 + quitarObservadores(observador : IObservador) : void 
 + notificar() : void
-//Permite notificar a a los observadores de cualquier cambio facilmente
 
-### Notificador (Implementa Runnable)
+### Notificador (implementa Runnable)
 - controlador : Controlador 
+- activo : boolean
+- pausado : volatile boolean
 + Notificador(controlador : Controlador)
 + run() : void
++ setActivo(valor : boolean) : void
++ getActivo() : boolean
++ setPausado(pausado : boolean) : void
++ isPausado() : boolean
 
-//Se encarga de cumplir la tasa de refresco del observer
-
-### Controlador (Implementa IObservable)
-- listaHilosMutantes : ArrayList\<Mutante>[]
+### Controlador (implementa IObservable)
+- listaHilosMutantes : ArrayList\<HiloMutante>[]
 - listaObservadores : ArrayList\<IObservador>
-- ejecutorDePeleas : EjecutorDePeleas 
+- ejecutorDePeleas : EjecutorDePeleas
 - notificador : Notificador
 - executorService : ThreadPoolExecutor
 - campoDeBatalla : CampoDeBatalla
-- DatosJuego : DatosJuego
+- datosJuego : DatosJuego
+- simulacionIniciada : boolean
+- colorSeleccionado : Color[]
 + Controlador() 
-+ iniciarJuego() : void
++ iniciarSimulacion(cantidadPorEquipo : int) : void
++ iniciarJuego(cantidad : int) : void
++ resetEstadoMutantes() : void
++ verificacionesFinCiclo() : void
++ pausar() : void
++ reanudar() : void
++ reiniciar(cantidadPorEquipo : int) : void
++ limpiarListas() : void
++ detener() : void
 + obtenerDatosJuego() : void
 + agregaObservadores(observador : IObservador) : void
 + quitarObservadores(observador : IObservador) : void 
 + notificar() : void
++ getColor() : Color[]
++ isSimulacionIniciada() : boolean
 + getCampoDeBatalla() : CampoDeBatalla
 + getDatosJuego() : DatosJuego
 + getEjecutorDePeleas() : EjecutorDePeleas
-+ getListaHilosMutantes(TipoEquipo tipo) : ArrayList<HiloMutante>
-+ getListaObservadores() : ArrayList<IObservador>
++ getListaHilosMutantes(tipo : TipoEquipo) : ArrayList\<HiloMutante>
++ getListaObservadores() : ArrayList\<IObservador>
 + getMedidasCampoBatalla() : int[]
 
-//Controla todo el flujo del juego y sirve de interfaz entre la UI y el sistema.
-
-### IObservador (Intefaz)
-+ actualizar(datos : DatosJuego) : void
-//Permite ser notificado de cualquier cambio en los objetos a los que se esta suscrito
-
 ### PruebaControlador
-+ main(args : String[]) : static void : static void
++ main(args : String[]) : static void
 
 ## ui
-### ObservadorUi (implementa IObservador)
-- ventanaPrincipal : VentanaPrincipal
-- datos : DatosJuego
-+ ObservadorUi(ventana : VentanaPrincipal)
-+ actualizar(datos : DatosJuego)
-+ getVentanaPrincipal() : VentanaPrincipal
-+ getDatos() : DatosJuego
 
-// Manda los datos actualizados al resto de la interfaz
+### PantallaJuego (hereda de JPanel)
+- mutantesDibujados : ArrayList\<MutantesDibujados>
+- principal : VentanaPrincipal
+- ataquesActivos : ArrayList\<AnimacionAtaque>
+- infoVisible : boolean
++ PantallaJuego(principal : VentanaPrincipal)
++ actualizar(datos : DatosJuego) : void
+- sincronizarMutantes(mutantes : ArrayList\<Mutante>) : void
+- claveMutante(mutante : Mutante) : int
+- agregarNuevasAnimaciones(peleas : ArrayList\<DatosPelea>) : void
+# paintComponent(g : Graphics) : void   
++ agregarAnimacionAtaque(ataque : DatosAtaque) : void
++ getMutantesDibujados() : ArrayList\<MutantesDibujados>
++ getPrincipal() : VentanaPrincipal
++ getAtaquesActivos() : ArrayList\<AnimacionAtaque>
++ isInfoVisible() : boolean
++ setInfoVisible(infoVisible : boolean) : void
+
+// sincronizarMutantes, claveMutante y agregarNuevasAnimaciones son privados: helpers internos de actualizar()
+// paintComponent es protected porque sobrescribe el metodo protected de JPanel
 
 ### VentanaPrincipal (hereda de JFrame)
 - botonIniciar : JButton     
 - botonPausar : JButton      
 - botonReiniciar : JButton   
 - pantallaJuego : PantallaJuego
-+ VentanaPrincipal() : void
-+ actualizar(datos : DatosJuego)
+- controlador : Controlador
+- observador : ObservadorUi
+- spinnerCantidad : JSpinner
+- etiquetaScore : JLabel
+- pausado : boolean
++ VentanaPrincipal()
 + inicializarComponentes() : void
+- alPresionarIniciar(evento : ActionEvent) : void
+- alPresionarPausar(evento : ActionEvent) : void
+- alPresionarReiniciar(evento : ActionEvent) : void
++ actualizar(datos : DatosJuego) : void
 + getBotonIniciar() : JButton
 + getBotonPausar() : JButton
 + getBotonReiniciar() : JButton
 + getPantallaJuego() : PantallaJuego
 
-### PantallaJuego (hereda de JPanel)
-- mutantesDibujados : ArrayList\<MutantesDibujados>
-- principal : VentanaPrincipal
-- ataquesActivos : ArrayList\<AnimaciónAtaque>
-- infoVisible : boolean
-+ PantallaJuego(principal : VentanaPrincipal)
-+ actualizar(datos : DatosJuego) 
-+ getMutantesDibujados() : ArrayList\<MutantesDibujados>
-+ getPrincipal() : VentanaPrincipal
-+ getAtaquesActivos() : ArrayList\<AnimaciónAtaque>
-+ isInfoVisible() : boolean
-+ setInfoVisible(infoVisible : boolean) : void
-+ agregarAnimacionAtaque(ataque : Ataque) : void
-+ paintComponent(g : Graphics) : void   
+// los tres manejadores de botones son privados: solo se usan como listeners internos por metodo-referencia
 
 ### MutantesDibujados
 - mutante : Mutante
-- jLabel : JLabel
-- imagen : ImageIcon
 + MutantesDibujados(mutante : Mutante)
-+ dibujar() : void
++ dibujar(g : Graphics2D) : void
+- dibujarBarraVida(g : Graphics2D, x : int, y : int, diametro : int) : void
 + obtenerPosicion() : Punto
 + toString() : String
 + getMutante() : Mutante
-+ getJLabel() : JLabel
-+ getImagen() : ImageIcon
+
+// dibujarBarraVida es privado: helper interno de dibujar()
 
 ### AnimacionAtaque (hereda de DatosAtaque)
 - pantalla : PantallaJuego
-- jLabel : JLabel
-- dibujos : ArrayList\<ImageIcon>
-+ AnimaciónAtaque(ataque : Ataque)
-+ dibujar() : void
+- frameActual : int
++ AnimacionAtaque(pantalla : PantallaJuego, ataque : DatosAtaque)
++ dibujar(g : Graphics2D) : void
+- colorPorPoder() : Color
 + isTerminada() : boolean
 + getPantalla() : PantallaJuego
-+ getJLabel() : JLabel
-+ getDibujos() : ArrayList\<ImageIcon>
 + getFrameActual() : int
 + setFrameActual(frameActual : int) : void
 
-### PruebaUi
-+ main(args : String[]) : static void : static void
+// colorPorPoder es privado: helper interno de dibujar()
 
+### ObservadorUi (implementa IObservador)
+- ventanaPrincipal : VentanaPrincipal
+- datos : DatosJuego
++ ObservadorUi(ventana : VentanaPrincipal)
++ actualizar(datos : DatosJuego) : void
++ getVentanaPrincipal() : VentanaPrincipal
++ getDatos() : DatosJuego
 ## otros
 
 ### Constantes (clase final)
-+ TIEMPO_ESPERA               : static final int
-+ SIZE_X                      : static final int
-+ SIZE_Y                      : static final int
-+ ATAQUE_MAXIMO               : static final int
-+ TASA_REFRESCO               : static final int
-+ VELOCIDAD                   : static final int
-+ TAMAÑO_MAXIMO               : static final int
-+ MAXIMO_DEFENSA              : static final int 
-+ MAXIMO_ATAQUE               : static final int *
-+ MAXIMO_POR_DEFECTO_ATAQUE   : static final int
-+ MAXIMO_VIDA                 : static final int
-+ RADIO_MAXIMO                : static final double
-+ DISTANCIA_MAXIMA_RECORRIDO  : static final int
-+ RUTA_IMAGENES_MUTANTES      : static final String[]
-+ RUTA_IMAGENES_ATAQUES       : static final String[]
-+ NUMERO_FRAMES_ATAQUE        : static final int
-+ DELAY_ANIMACION_ATAQUE      : static final int  
-+ TASA_REFRESCO_OBSERVABLE    : static final int
++ TIEMPO_ESPERA                    : static final int
++ SIZE_X                           : static final int
++ SIZE_Y                           : static final int
++ CANTIDAD_THREADS                 : static final int
++ PADDING_PANTALLA                 : static final int
++ RESIZABLE                        : static final boolean
++ ATAQUE_MINIMO                    : static final int
++ ATAQUE_MAXIMO_POR_DEFECTO        : static final int
++ ATAQUE_MAXIMO                    : static final int
++ CANTIDAD_ESTADOS_MUTANTE         : static final int
++ CANTIDAD_DE_DECISIONES_MUTANTE   : static final int
++ DIMENSIONES_PANTALLA             : static final int[]
++ VELOCIDAD                        : static final int
++ TAMAÑO_MINIMO                    : static final int
++ TAMAÑO_MAXIMO                    : static final int
++ NOMBRES_PODERES                  : static final String[]
++ COLORES_PODERES                  : static final Color[]
++ DEFENSA_MINIMO                   : static final int
++ DEFENSA_MAXIMO                   : static final int
++ MAXIMO_VIDA                      : static final int
++ CANTIDAD_EQUIPOS                 : static final int
++ CANTIDAD_MUTANTES_POR_DEFECTO    : static final int
++ CANTIDAD_MUTANTES_MAXIMO         : static final int
++ CANTIDAD_MUTANTES_MINIMO         : static final int
++ POSICION_ARREGLO                 : static final int[]
++ SIMBOLOS                         : static final String[]
++ RADIO_MAXIMO                     : static final double
++ DISTANCIA_MAXIMA_RECORRIDO       : static final int
++ RUTA_IMAGENES_MUTANTES           : static final String[]
++ RUTA_IMAGENES_ATAQUES            : static final String[]
++ COLORES                          : static Color[][]
++ BACKGROUND                       : static Color
++ TASA_REFRESCO_DATOS              : static final int
++ TASA_REFRESCO_PANTALLA           : static final int
++ DELAY_DE_THREADS                 : static final int
++ MUTANTES_MUERTOS_INICIAL         : static final int
++ TAMANO_ANIMACION                 : static final int
++ NUMERO_FRAMES_ATAQUE             : static final int
++ DIAMETRO_MUTANTE                 : static final int
++ COLOR_MUTANTE_SIN_EQUIPO         : static final Color
++ COLOR_BORDE_MUTANTE              : static final Color
++ COLOR_SIMBOLO_MUTANTE            : static final Color
++ COLOR_NOMBRE_MUTANTE             : static final Color
++ COLOR_BARRA_VIDA_FONDO           : static final Color
++ COLOR_BARRA_VIDA_ALTA            : static final Color
++ COLOR_BARRA_VIDA_BAJA            : static final Color
++ FUENTE_SIMBOLO                   : static final Font
++ FUENTE_NOMBRE                    : static final Font
++ FUENTE_INFORMACION               : static final Font
++ POSICION_X_INFO                  : static final int
++ POSICION_Y_INFO                  : static final int
++ SEPARACION_BARRA_VIDA            : static final int
++ ALTURA_BARRA_VIDA                : static final int
++ PORCENTAJE_VIDA_BAJA             : static final double
++ AJUSTE_X_NOMBRE                  : static final int
++ SEPARACION_Y_NOMBRE              : static final int
++ TITULO_VENTANA                   : static final String
++ TEXTO_INICIAR                    : static final String
++ TEXTO_PAUSAR                     : static final String
++ TEXTO_REANUDAR                   : static final String
++ TEXTO_REINICIAR                  : static final String
++ TEXTO_MUTANTES_POR_EQUIPO        : static final String
++ TEXTO_INSTRUCCIONES              : static final String
++ SEPARADOR_SCORE                  : static final String
++ TEXTO_PARTIDA_TERMINADA          : static final String
++ BORDE_SCORE_ARRIBA               : static final int
++ BORDE_SCORE_IZQUIERDA            : static final int
++ BORDE_SCORE_ABAJO                : static final int
++ BORDE_SCORE_DERECHA              : static final int
++ INCREMENTO_CANTIDAD_MUTANTES     : static final int
+
+// POSICION_ARREGLO y SIMBOLOS: [0] -> Equipo A, [1] -> Equipo B
 
 ### Punto
 - x : int
 - y : int
 + Punto(x : int, y : int)
-+ setX(x : int)
-+ setY(y : int)
++ setX(x : int) : void
++ setY(y : int) : void
 + getX() : int
 + getY() : int
 
 ### Matematicas (clase final)
-+ calcularRadio(Punto a, Punto b) : static double
-+ doubleAleatorio(minimo : double , maximo : double) : static double
-+ intAleatorio(minimo : int, maximo : int) : static int  
++ calcularRadio(a : Punto, b : Punto) : static double
++ doubleAleatorio(minimo : double, maximo : double) : static double
++ intAleatorio(minimo : int, maximo : int) : static int
+
+// Todos los rangos son inclusivos
 
 ## main
 ### main

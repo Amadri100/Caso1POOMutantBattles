@@ -1,6 +1,4 @@
 package controlador;
-
-import java.io.Console;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.Executors;
@@ -9,9 +7,7 @@ import juego.CampoDeBatalla;
 import juego.TipoEquipo;
 import  otros.Constantes;
 import otros.Matematicas;
-import controlador.HiloMutante;
 import java.awt.Color;
-import controlador.DatosJuego;
 
 public class Controlador implements IObservable {
     private ArrayList<HiloMutante>[] listaHilosMutantes;
