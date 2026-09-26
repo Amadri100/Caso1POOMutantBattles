@@ -58,9 +58,10 @@ public class VentanaPrincipal extends JFrame {
         this.botonPausar.setEnabled(false);
         this.botonReiniciar.setEnabled(false);
 
+        //Sytaxis de metodo-referencia clase::metodo
         this.botonIniciar.addActionListener(this::alPresionarIniciar);
         this.botonPausar.addActionListener(this::alPresionarPausar);
-        this.botonReiniciar.addActionListener(this::alPresionarReiniciar);
+        this.botonReiniciar.addActionListener(this::alPresionarReiniciar); 
 
         JPanel panelSuperior = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panelSuperior.add(new JLabel(Constantes.TEXTO_INSTRUCCIONES));

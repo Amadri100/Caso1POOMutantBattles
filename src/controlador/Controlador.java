@@ -81,13 +81,18 @@ public class Controlador implements IObservable {
     }
 
     public void reiniciar(int cantidadPorEquipo) {
-        detener();
-        for (TipoEquipo tipo : TipoEquipo.values()) {
-            this.listaHilosMutantes[tipo.getIndice()].clear();
-        }
+        this.limpiarListas();   
         this.ejecutorDePeleas = new EjecutorDePeleas(this);
         this.notificador = new Notificador(this);
         iniciarSimulacion(cantidadPorEquipo);
+        System.out.println("En teoria se reinicia");
+    }
+
+    public void limpiarListas() {
+        this.detener();
+        for (TipoEquipo tipo : TipoEquipo.values()) {
+            this.listaHilosMutantes[tipo.getIndice()].clear();
+        }
     }
 
     // CAMBIO (UI): detiene ordenadamente los hilos de la simulación actual.
