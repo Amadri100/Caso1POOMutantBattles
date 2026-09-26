@@ -25,8 +25,7 @@ public class Mutante {
         this.defensa = Matematicas.intAleatorio(Constantes.DEFENSA_MINIMO, Constantes.DEFENSA_MAXIMO);
         switch (this.equipo.getTipoEquipo()) {
             case EQUIPO_A:
-                this.posicion = new Punto(Constantes.SIZE_X + 50, Constantes.SIZE_Y - 5
-                    0);
+                this.posicion = new Punto(Constantes.SIZE_X + 50, Constantes.SIZE_Y - 5);
                 break;
             case EQUIPO_B:
                 this.posicion = new Punto(Constantes.SIZE_X, Constantes.SIZE_Y);
